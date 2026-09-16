@@ -1,1888 +1,459 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#141414">
-<title>Impostor Ultimate</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Bebas+Neue&family=Permanent+Marker&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --ink: #0a0a0a;
-    --ink-2: #1a1a1a;
-    --paper: #f2ecd8;
-    --paper-dark: #d9d2b8;
-    --bg: #141414;
-    --bg-2: #1c1c1c;
-    --bg-3: #242424;
-    --yellow: #ffe600;
-    --yellow-2: #ffcc00;
-    --red: #ff2e2e;
-    --red-2: #cc1a1a;
-    --blue: #00b4ff;
-    --blue-2: #0077cc;
-    --magenta: #ff00aa;
-    --green: #00e676;
-    --white: #ffffff;
-    --gray: #9a9a9a;
-    --border-w: 3px;
-    --shadow: 5px 5px 0 var(--ink);
-    --shadow-sm: 3px 3px 0 var(--ink);
-    --shadow-lg: 8px 8px 0 var(--ink);
-    --font-title: 'Bangers', cursive, sans-serif;
-    --font-display: 'Bebas Neue', sans-serif;
-    --font-marker: 'Permanent Marker', cursive;
-    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-
-  html { background: var(--bg); }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: var(--font-body);
-    background: var(--bg);
-    color: var(--white);
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 14px;
-    padding-top: max(14px, env(safe-area-inset-top));
-    -webkit-tap-highlight-color: transparent;
-    overflow-x: hidden;
-    position: relative;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    font-weight: 500;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(circle at 15% 5%, rgba(255,230,0,0.10) 0%, transparent 35%),
-      radial-gradient(circle at 85% 95%, rgba(255,46,46,0.10) 0%, transparent 35%),
-      radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1.4px);
-    background-size: auto, auto, 7px 7px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(115deg, transparent 0, transparent 60px, rgba(255,255,255,0.025) 60px, rgba(255,255,255,0.025) 61px);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .app { width: 100%; max-width: 460px; position: relative; z-index: 1; padding-bottom: max(40px, env(safe-area-inset-bottom)); }
-
-  /* LANGUAGE OVERLAY */
-  #lang-overlay {
-    position: fixed; inset: 0; background: var(--bg); z-index: 9999;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 48px 20px 40px; overflow-y: auto;
-    animation: panelIn 0.4s cubic-bezier(0.2, 1.4, 0.4, 1);
-  }
-  #lang-overlay::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(255,230,0,0.14) 0%, transparent 55%), radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1.4px);
-    background-size: auto, 7px 7px; pointer-events: none;
-  }
-  #lang-overlay > * { position: relative; }
-
-  .lang-logo-wrap { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; transform: rotate(-2deg); }
-  .lang-icon { font-size: clamp(2.4rem, 8vw, 3rem); line-height: 1; filter: drop-shadow(4px 4px 0 var(--ink)); }
-  .lang-logo {
-    font-family: var(--font-title); font-size: clamp(2.6rem, 10vw, 3.6rem);
-    letter-spacing: 2px; color: var(--yellow); line-height: 0.9; text-transform: uppercase;
-    text-shadow: -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink), 2px 2px 0 var(--ink), 4px 4px 0 var(--ink), 6px 6px 0 var(--red);
-  }
-  .lang-subtitle { color: var(--gray); font-family: var(--font-marker); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 32px; text-align: center; }
-  .lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 420px; }
-  .lang-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px;
-    background: var(--bg-2); border: var(--border-w) solid var(--white); color: var(--white);
-    cursor: pointer; transition: all 0.15s ease; font-family: var(--font-display);
-    font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-    box-shadow: var(--shadow-sm); border-radius: 6px;
-  }
-  .lang-btn:hover, .lang-btn.active {
-    background: var(--yellow); color: var(--ink); border-color: var(--ink);
-    transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink);
-  }
-  .lang-flag { font-size: 1.7rem; line-height: 1; }
-  .lang-confirm {
-    margin-top: 30px; padding: 15px 52px; background: var(--yellow); color: var(--ink);
-    border: var(--border-w) solid var(--ink); border-radius: 8px; font-family: var(--font-display);
-    font-size: 1.15rem; font-weight: 700; letter-spacing: 2px; cursor: pointer;
-    transition: all 0.12s ease; text-transform: uppercase; box-shadow: var(--shadow);
-  }
-  .lang-confirm:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
-  .lang-confirm:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
-
-  /* SCREENS */
-  .screen { display: none; }
-  .screen.active { display: block; animation: panelIn 0.4s cubic-bezier(0.2, 1.4, 0.4, 1); }
-  @keyframes panelIn {
-    0% { transform: translateY(24px) rotate(-1.5deg); opacity: 0; }
-    100% { transform: translateY(0) rotate(0); opacity: 1; }
-  }
-
-  /* HEADER */
-  .header { padding: 22px 0 18px; text-align: center; position: relative; }
-  .game-title {
-    font-family: var(--font-title); font-size: clamp(2rem, 8vw, 2.8rem);
-    letter-spacing: 3px; color: var(--yellow); line-height: 0.95; text-transform: uppercase;
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    text-shadow: -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink), 2px 2px 0 var(--ink), 4px 4px 0 var(--ink), 7px 7px 0 var(--red);
-    transform: rotate(-1.5deg);
-  }
-  .game-tagline { color: var(--gray); font-family: var(--font-marker); font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; margin-top: 10px; }
-  .lang-toggle-btn {
-    position: absolute; top: 22px; right: 0; background: var(--bg-2);
-    border: var(--border-w) solid var(--white); width: 42px; height: 42px; border-radius: 8px;
-    color: var(--white); font-size: 1.1rem; cursor: pointer; transition: all 0.15s ease;
-    display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);
-  }
-  .lang-toggle-btn:hover { background: var(--yellow); color: var(--ink); border-color: var(--ink); transform: rotate(-8deg) translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
-
-  /* CARD */
-  .card {
-    background: var(--bg-2); border: var(--border-w) solid var(--white);
-    border-radius: 10px; padding: 20px; margin-bottom: 14px; position: relative;
-    box-shadow: var(--shadow);
-  }
-  .card::before {
-    content: ''; position: absolute; top: 6px; right: 6px; width: 44px; height: 44px;
-    background-image: radial-gradient(circle, var(--yellow) 1.2px, transparent 1.6px);
-    background-size: 6px 6px; opacity: 0.28; pointer-events: none; border-radius: 0 8px 0 0;
-  }
-  .card-title {
-    font-family: var(--font-display); font-size: 1.15rem; font-weight: 700;
-    letter-spacing: 1.5px; color: var(--yellow); display: flex; align-items: center; gap: 8px;
-    text-transform: uppercase; text-shadow: 2px 2px 0 var(--ink);
-  }
-
-  .section-label { font-family: var(--font-display); font-size: 0.9rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--white); margin-bottom: 8px; font-weight: 700; opacity: 0.85; }
-  .row { display: flex; gap: 12px; }
-  .col { flex: 1; min-width: 0; }
-
-  /* INPUTS */
-  .field { margin-bottom: 18px; }
-  .field:last-child { margin-bottom: 0; }
-  label.field-label { display: block; font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--white); margin-bottom: 8px; font-weight: 700; }
-
-  input[type="number"], input[type="text"], select, textarea {
-    width: 100%; padding: 12px 14px; background: var(--bg-3);
-    border: var(--border-w) solid var(--white); color: var(--white);
-    font-family: var(--font-body); font-size: 1rem; font-weight: 600;
-    transition: all 0.15s ease; -webkit-appearance: none; appearance: none;
-    border-radius: 8px; box-shadow: var(--shadow-sm);
-  }
-  input::placeholder, textarea::placeholder { color: var(--gray); opacity: 0.75; font-weight: 500; }
-  input:focus, select:focus, textarea:focus {
-    outline: none; background: var(--bg); border-color: var(--yellow);
-    transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--yellow);
-  }
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffe600' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 12px center; padding-right: 38px; cursor: pointer;
-  }
-  select option { background: var(--bg-2); color: var(--white); }
-  textarea { resize: vertical; min-height: 84px; font-family: var(--font-body); }
-  @media screen and (max-width: 768px) { input, select, textarea { font-size: 16px; } }
-
-  /* STEPPER */
-  .stepper { display: flex; align-items: stretch; background: var(--bg-3); border: var(--border-w) solid var(--white); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-sm); }
-  .stepper button { padding: 12px 16px; background: var(--yellow); border: none; color: var(--ink); font-size: 1.3rem; font-weight: 900; cursor: pointer; transition: all 0.1s ease; font-family: var(--font-body); min-width: 48px; line-height: 1; }
-  .stepper button:hover { background: var(--red); color: var(--white); }
-  .stepper button:active { transform: scale(0.9); }
-  .stepper-val {
-    flex: 1; text-align: center; font-family: var(--font-display); font-size: 1.6rem;
-    font-weight: 700; color: var(--yellow); padding: 6px 0;
-    display: flex; align-items: center; justify-content: center;
-    letter-spacing: 1px; background: var(--bg-3); text-shadow: 2px 2px 0 var(--ink);
-  }
-
-  /* CATEGORY GRID */
-  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .cat-item input { display: none; }
-  .cat-item label {
-    display: flex; align-items: center; gap: 8px; padding: 12px 14px; background: var(--bg-3);
-    border: var(--border-w) solid var(--white); cursor: pointer; font-family: var(--font-display);
-    font-size: 0.95rem; font-weight: 700; letter-spacing: 0.8px; transition: all 0.12s ease;
-    user-select: none; color: var(--white); border-radius: 8px; text-transform: uppercase;
-    box-shadow: var(--shadow-sm);
-  }
-  .cat-item label:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--yellow); }
-  .cat-item input:checked + label {
-    background: var(--yellow); color: var(--ink); border-color: var(--ink);
-    transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--red); text-shadow: none;
-  }
-  .cat-item.full { grid-column: span 2; }
-
-  /* SOUND */
-  .sound-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    margin-top: 10px; padding: 10px 14px; background: var(--bg-3);
-    border: var(--border-w) solid var(--white); font-family: var(--font-marker);
-    font-size: 0.85rem; color: var(--white); border-radius: 8px; box-shadow: var(--shadow-sm);
-  }
-
-  /* BUTTONS */
-  .btn {
-    display: block; width: 100%; padding: 14px 22px;
-    border: var(--border-w) solid var(--ink); border-radius: 8px;
-    font-family: var(--font-display); font-size: 1.15rem; font-weight: 700;
-    cursor: pointer; transition: all 0.12s ease; text-align: center;
-    margin-top: 12px; letter-spacing: 2px; text-transform: uppercase;
-    box-shadow: var(--shadow); -webkit-tap-highlight-color: transparent; line-height: 1.1;
-  }
-  .btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ink); }
-  .btn-primary { background: var(--yellow); color: var(--ink); }
-  .btn-primary:hover { background: var(--yellow-2); transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--ink); }
-  .btn-ghost { background: var(--bg-2); color: var(--white); border-color: var(--white); }
-  .btn-ghost:hover { background: var(--bg-3); transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--yellow); border-color: var(--yellow); }
-  .btn-danger { background: var(--red); color: var(--white); border-color: var(--ink); }
-  .btn-danger:hover { background: var(--red-2); transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--ink); }
-  .btn-sm { padding: 10px 18px; font-size: 0.95rem; width: auto; display: inline-block; margin-top: 0; letter-spacing: 1.5px; box-shadow: var(--shadow-sm); }
-  .btn-sm:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
-  .btn-row { display: flex; gap: 12px; margin-top: 12px; }
-  .btn-row .btn { margin-top: 0; }
-
-  /* PLAYER LIST */
-  .player-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .player-num { font-family: var(--font-display); font-size: 1.1rem; color: var(--yellow); width: 26px; text-align: right; flex-shrink: 0; font-weight: 700; text-shadow: 2px 2px 0 var(--ink); }
-  .player-input-row input { margin: 0; flex: 1; }
-  .remove-player-btn {
-    background: var(--red); border: var(--border-w) solid var(--ink); color: var(--white);
-    width: 42px; height: 42px; font-size: 1.05rem; cursor: pointer; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.12s ease; flex-shrink: 0; font-weight: 900; box-shadow: var(--shadow-sm);
-  }
-  .remove-player-btn:hover { background: var(--red-2); transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
-  .remove-player-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
-
-  /* REVEAL LIST */
-  .reveal-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 18px; background: var(--bg-3); border: var(--border-w) solid var(--white);
-    margin-bottom: 10px; cursor: pointer; transition: all 0.12s ease;
-    font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
-    letter-spacing: 0.8px; color: var(--white); border-radius: 8px;
-    box-shadow: var(--shadow-sm); text-transform: uppercase;
-  }
-  .reveal-item:hover { border-color: var(--yellow); background: var(--bg-2); transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--yellow); }
-  .reveal-item.done { opacity: 0.55; cursor: default; pointer-events: none; border-color: var(--green); background: rgba(0, 230, 118, 0.08); }
-  .reveal-item .reveal-name { display: flex; align-items: center; gap: 10px; }
-  .reveal-item .reveal-status { font-family: var(--font-marker); font-size: 0.78rem; color: var(--gray); font-weight: 400; }
-  .reveal-item.done .reveal-status { color: var(--green); }
-
-  /* TIMER */
-  .timer-display {
-    font-family: var(--font-title); font-size: clamp(5rem, 20vw, 8rem);
-    font-weight: 400; text-align: center; letter-spacing: 6px; padding: 8px 0 4px;
-    color: var(--yellow); transition: color 0.3s ease; line-height: 1;
-    text-shadow: -3px -3px 0 var(--ink), 3px -3px 0 var(--ink), -3px 3px 0 var(--ink), 3px 3px 0 var(--ink), 6px 6px 0 var(--red);
-    font-variant-numeric: tabular-nums;
-  }
-  .timer-display.warning { color: #ff9500; }
-  .timer-display.danger { color: var(--red); text-shadow: -3px -3px 0 var(--ink), 3px -3px 0 var(--ink), -3px 3px 0 var(--ink), 3px 3px 0 var(--ink), 6px 6px 0 var(--yellow); animation: pulse 0.6s ease-in-out infinite alternate; }
-  @keyframes pulse { from { transform: scale(1) rotate(-1deg); } to { transform: scale(1.06) rotate(1deg); } }
-
-  .starter-card {
-    background: var(--bg-3); border: var(--border-w) solid var(--yellow);
-    padding: 14px 20px; text-align: center; margin-top: 16px;
-    border-radius: 8px; position: relative; box-shadow: var(--shadow-sm);
-  }
-  .starter-label { font-family: var(--font-marker); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 4px; font-weight: 400; }
-  .starter-name { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; letter-spacing: 1.5px; color: var(--yellow); text-transform: uppercase; text-shadow: 2px 2px 0 var(--ink); }
-
-  /* ============================================================
-     VOTING SCREEN
-     ============================================================ */
-  .vote-progress {
-    text-align: center;
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    letter-spacing: 3px;
-    color: var(--gray);
-    margin-bottom: 12px;
-    text-transform: uppercase;
-  }
-
-  .vote-turn-label {
-    font-family: var(--font-marker);
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    color: var(--gray);
-    text-align: center;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-  }
-
-  .vote-turn-name {
-    font-family: var(--font-title);
-    font-size: clamp(2rem, 9vw, 2.8rem);
-    letter-spacing: 3px;
-    color: var(--yellow);
-    text-align: center;
-    line-height: 1;
-    text-transform: uppercase;
-    text-shadow: -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink), 2px 2px 0 var(--ink), 5px 5px 0 var(--red);
-    transform: rotate(-1deg);
-    margin-bottom: 8px;
-  }
-
-  .vote-instruction {
-    text-align: center;
-    font-family: var(--font-marker);
-    font-size: 0.82rem;
-    color: var(--gray);
-    margin-bottom: 18px;
-    line-height: 1.5;
-  }
-
-  .vote-options { display: flex; flex-direction: column; gap: 10px; }
-
-  .vote-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 14px 18px;
-    background: var(--bg-3);
-    border: var(--border-w) solid var(--white);
-    color: var(--white);
-    font-family: var(--font-display);
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 8px;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.12s ease;
-    text-align: left;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .vote-option:hover, .vote-option:focus-visible {
-    background: var(--yellow);
-    color: var(--ink);
-    border-color: var(--ink);
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 var(--red);
-    outline: none;
-  }
-  .vote-option:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
-
-  .vote-option-num {
-    font-family: var(--font-marker);
-    font-size: 0.85rem;
-    color: var(--yellow);
-    width: 26px;
-    flex-shrink: 0;
-    opacity: 0.9;
-  }
-  .vote-option:hover .vote-option-num, .vote-option:focus-visible .vote-option-num { color: var(--ink); }
-
-  .vote-option-name { flex: 1; }
-
-  /* Vote confirmation */
-  .vote-confirm-icon {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 12px;
-    border-radius: 50%;
-    background: var(--green);
-    border: 3px solid var(--ink);
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.2rem;
-    font-weight: 900;
-    box-shadow: 4px 4px 0 var(--ink);
-    transform: rotate(-4deg);
-  }
-  .vote-confirm-text {
-    font-family: var(--font-title);
-    font-size: 1.7rem;
-    letter-spacing: 2px;
-    color: var(--green);
-    text-align: center;
-    text-transform: uppercase;
-    text-shadow: -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink), 2px 2px 0 var(--ink), 4px 4px 0 var(--ink);
-    margin-bottom: 10px;
-  }
-  .vote-confirm-who {
-    font-family: var(--font-marker);
-    font-size: 0.95rem;
-    text-align: center;
-    color: var(--gray);
-    margin-bottom: 20px;
-    line-height: 1.5;
-  }
-  .vote-confirm-who strong {
-    color: var(--yellow);
-    font-family: var(--font-display);
-    font-size: 1.15rem;
-    letter-spacing: 1px;
-  }
-
-  /* MODALS */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(10, 10, 10, 0.88); z-index: 5000;
-    display: none; align-items: center; justify-content: center; padding: 20px;
-  }
-  .modal-overlay::before {
-    content: ''; position: absolute; inset: 0;
-    background: repeating-linear-gradient(115deg, transparent 0, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px), radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1.4px);
-    background-size: auto, 6px 6px; pointer-events: none;
-  }
-  .modal-overlay.visible { display: flex; }
-  #manage-modal { z-index: 6000; }
-
-  /* ROLE CARD */
-  .role-card {
-    width: 100%; max-width: 380px; padding: 28px 24px 24px; text-align: center;
-    position: relative; overflow: hidden; background: var(--bg-2);
-    border: 4px solid var(--ink); border-radius: 12px;
-    box-shadow: 10px 10px 0 var(--ink);
-    animation: burstIn 0.45s cubic-bezier(0.2, 1.6, 0.4, 1);
-    z-index: 1;
-  }
-  @keyframes burstIn {
-    0% { transform: scale(0.3) rotate(-14deg); opacity: 0; }
-    60% { transform: scale(1.05) rotate(3deg); opacity: 1; }
-    100% { transform: scale(1) rotate(0); opacity: 1; }
-  }
-  .role-card::before {
-    content: ''; position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1.4px);
-    background-size: 6px 6px; pointer-events: none; opacity: 0.7;
-  }
-  .role-card > * { position: relative; }
-  .role-card.impostor { background: linear-gradient(160deg, #ff2e2e 0%, #cc1a1a 100%); border-color: var(--ink); color: var(--white); box-shadow: 10px 10px 0 var(--yellow); }
-  .role-card.civil { background: linear-gradient(160deg, #00b4ff 0%, #0077cc 100%); border-color: var(--ink); color: var(--white); box-shadow: 10px 10px 0 var(--yellow); }
-  .role-card.win { background: linear-gradient(160deg, #ffcc00 0%, #ff9500 100%); border-color: var(--ink); color: var(--ink); box-shadow: 10px 10px 0 var(--red); }
-  .role-card.lose { background: linear-gradient(160deg, #6a1b9a 0%, #4a148c 100%); border-color: var(--ink); color: var(--white); box-shadow: 10px 10px 0 var(--red); }
-
-  .role-emoji {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 84px; height: 84px; font-size: 2.8rem; line-height: 1;
-    margin: 0 auto 12px; background: var(--yellow);
-    border: 3px solid var(--ink); border-radius: 50%;
-    box-shadow: 4px 4px 0 var(--ink); transform: rotate(-4deg);
-  }
-
-  .role-title {
-    font-family: var(--font-title); font-size: clamp(1.8rem, 7vw, 2.3rem);
-    letter-spacing: 3px; line-height: 1; margin-bottom: 16px; text-transform: uppercase;
-    color: var(--white);
-    text-shadow: -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink), 2px 2px 0 var(--ink), 4px 4px 0 var(--ink);
-  }
-  .role-card.win .role-title { color: var(--ink); text-shadow: -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink), 2px 2px 0 var(--ink), 4px 4px 0 var(--white); }
-
-  .word-box {
-    background: var(--paper); color: var(--ink); padding: 14px 18px; margin: 12px 0;
-    font-family: var(--font-title); font-size: 1.7rem; font-weight: 400;
-    letter-spacing: 2px; border: 3px solid var(--ink); border-radius: 6px;
-    word-break: break-word; box-shadow: 4px 4px 0 var(--ink);
-    line-height: 1.1; text-transform: uppercase;
-  }
-
-  .role-hint { font-family: var(--font-body); font-size: 0.92rem; color: var(--white); line-height: 1.5; margin-bottom: 20px; font-weight: 500; }
-  .role-card.win .role-hint { color: var(--ink); }
-
-  .role-card .btn-primary { background: var(--ink); color: var(--yellow); border-color: var(--yellow); box-shadow: 5px 5px 0 rgba(0,0,0,0.5); }
-  .role-card .btn-primary:hover { background: var(--yellow); color: var(--ink); border-color: var(--ink); }
-  .role-card.win .btn-primary { background: var(--red); color: var(--white); border-color: var(--ink); }
-  .role-card.win .btn-primary:hover { background: var(--ink); color: var(--yellow); }
-  .role-card .btn-ghost { background: rgba(0,0,0,0.2); color: var(--white); border-color: var(--white); }
-  .role-card .btn-ghost:hover { background: rgba(0,0,0,0.4); border-color: var(--yellow); color: var(--yellow); }
-
-  /* HELP */
-  .help-panel {
-    background: var(--bg-3); border: 2px dashed var(--yellow); padding: 14px;
-    margin-top: 12px; font-size: 0.9rem; line-height: 1.65; color: var(--paper);
-    display: none; border-radius: 8px;
-  }
-  .help-panel.open { display: block; animation: panelIn 0.3s ease; }
-  .help-panel h4 { font-family: var(--font-display); color: var(--yellow); margin-bottom: 8px; font-size: 0.95rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
-  .help-panel ul, .help-panel ol { padding-left: 20px; }
-  .help-panel li { margin-bottom: 5px; }
-  .help-panel strong { color: var(--yellow); }
-
-  .help-btn {
-    background: var(--bg-3); border: 2px solid var(--yellow); color: var(--yellow);
-    padding: 5px 12px; font-family: var(--font-display); font-size: 0.85rem;
-    font-weight: 700; letter-spacing: 1.5px; cursor: pointer; transition: all 0.12s ease;
-    border-radius: 6px; text-transform: uppercase;
-  }
-  .help-btn:hover { background: var(--yellow); color: var(--ink); }
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
-
-  .divider { height: 3px; background: var(--ink); margin: 16px 0; }
-
-  .app-footer { text-align: center; color: var(--gray); font-family: var(--font-marker); font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; padding-top: 24px; transform: rotate(-0.5deg); }
-
-  /* SCROLL LIST */
-  .scroll-list { max-height: 50vh; overflow-y: auto; padding-right: 6px; scrollbar-width: thin; scrollbar-color: var(--yellow) transparent; }
-  .scroll-list::-webkit-scrollbar { width: 6px; }
-  .scroll-list::-webkit-scrollbar-track { background: transparent; }
-  .scroll-list::-webkit-scrollbar-thumb { background: var(--yellow); border-radius: 3px; border: 1px solid var(--ink); }
-
-  .hidden { display: none !important; }
-
-  #custom-area { margin-top: 12px; padding: 14px; background: var(--bg-3); border: 3px dashed var(--yellow); border-radius: 8px; animation: panelIn 0.3s ease; }
-
-  /* MANAGE MODAL */
-  #manage-modal .role-card { max-width: 420px; text-align: left; background: var(--bg-2); }
-  #manage-modal .role-card::before { opacity: 0.15; }
-  #manage-modal .card-title { justify-content: center; margin-bottom: 18px; color: var(--yellow); }
-  #manage-modal .manage-list { max-height: 40vh; overflow-y: auto; margin-bottom: 16px; scrollbar-width: thin; }
-  #manage-modal .manage-list::-webkit-scrollbar { width: 6px; }
-  #manage-modal .manage-list::-webkit-scrollbar-thumb { background: var(--yellow); border-radius: 3px; }
-  #manage-modal .manage-item {
-    display: flex; justify-content: space-between; align-items: center;
-    background: var(--bg-3); padding: 10px 14px; margin-bottom: 8px;
-    border: 2px solid var(--white); border-radius: 6px;
-    font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 1px;
-    text-transform: uppercase; color: var(--white);
-  }
-  #manage-modal .role-card .btn-ghost { border-color: var(--white); color: var(--white); }
-  #manage-modal .role-card .btn-ghost:hover { border-color: var(--yellow); color: var(--yellow); }
-
-  /* HISTORY */
-  .history-item { background: var(--bg-3); border: var(--border-w) solid var(--white); padding: 14px; margin-bottom: 12px; border-radius: 8px; box-shadow: var(--shadow-sm); }
-  .history-item h4 { color: var(--yellow); font-family: var(--font-marker); font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 8px; font-weight: 400; }
-  .history-item p { font-size: 0.9rem; color: var(--white); margin-bottom: 4px; line-height: 1.45; }
-  .history-item p strong { color: var(--gray); font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
-  .history-item .imp-color { color: var(--red); font-weight: 900; font-family: var(--font-display); letter-spacing: 1px; }
-
-  @media (max-width: 380px) {
-    .lang-grid { grid-template-columns: repeat(2, 1fr); }
-    .card { padding: 16px; }
-    .role-card { padding: 22px 18px 20px; }
-    .role-emoji { width: 72px; height: 72px; font-size: 2.4rem; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipster Auto-Post 🚀</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+        .app-container {
+            background: #1e293b;
+            border-radius: 24px;
+            padding: 32px;
+            width: 100%;
+            max-width: 680px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            border: 1px solid #334155;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #38bdf8, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 16px;
+            font-family: inherit;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: #38bdf8;
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .btn-preview {
+            background: #334155;
+            color: #e2e8f0;
+        }
+        .btn-preview:hover { background: #475569; }
+        .btn-send {
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: #0f172a;
+        }
+        .btn-send:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .preview-box {
+            background: #0f172a;
+            border: 1px dashed #475569;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            display: none;
+        }
+        .preview-box.visible { display: block; }
+        .status {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .status.success {
+            display: block;
+            background: #064e3b;
+            color: #6ee7b7;
+            border: 1px solid #059669;
+        }
+        .status.error {
+            display: block;
+            background: #450a0a;
+            color: #fca5a5;
+            border: 1px solid #dc2626;
+        }
+        .config-section {
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #1e293b;
+        }
+        .config-section summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #38bdf8;
+            font-size: 0.9rem;
+        }
+        .config-section[open] summary { margin-bottom: 16px; }
+        .hint {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: -10px;
+            margin-bottom: 14px;
+        }
+        .badge {
+            display: inline-block;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-left: 8px;
+        }
+        @media (max-width: 500px) {
+            .app-container { padding: 20px; }
+            .row { grid-template-columns: 1fr; }
+            .btn-group { flex-direction: column; }
+        }
+    </style>
 </head>
 <body>
-
-<!-- LANGUAGE OVERLAY -->
-<div id="lang-overlay">
-  <div class="lang-logo-wrap">
-    <span class="lang-icon">🕵️</span>
-    <span class="lang-logo">Impostor</span>
-  </div>
-  <div class="lang-subtitle" id="lang-pick-label">Select your language / Elige tu idioma</div>
-  <div class="lang-grid" id="lang-grid"></div>
-  <button type="button" class="lang-confirm" id="lang-confirm-btn">Continue →</button>
-</div>
-
-<!-- MODALS -->
-<div class="modal-overlay" id="role-modal"></div>
-
-<div class="modal-overlay" id="manage-modal">
-  <div class="role-card" style="text-align: left;">
-    <div class="card-title" style="justify-content: center; margin-bottom: 20px;" data-i18n="manage_players_title">GESTIONAR JUGADORES</div>
-    <div class="manage-list" id="manage-list"></div>
-    <div class="row" style="align-items: center;">
-      <input type="text" id="new-player-name-mid" style="flex:1; margin:0;" placeholder="Nombre..." data-i18n-placeholder="add_player_placeholder">
-      <button type="button" class="btn btn-primary btn-sm" id="btn-add-mid" style="padding: 0 18px; height: 46px; font-size: 1.4rem;">+</button>
-    </div>
-    <button type="button" class="btn btn-ghost" id="btn-close-manage" style="margin-top: 20px;" data-i18n="btn_close">Cerrar</button>
-  </div>
-</div>
-
-<div class="app">
-
-  <!-- SETUP -->
-  <div id="screen-setup" class="screen active">
-    <div class="header">
-      <button type="button" class="lang-toggle-btn" id="btn-lang-toggle" title="Change language">🌐</button>
-      <div class="game-title" id="title-main">🕵️ Impostor</div>
-      <div class="game-tagline" id="tagline-main">Ultimate Edition</div>
-    </div>
-
-    <div class="card">
-      <div class="section-header">
-        <div class="card-title" data-i18n="setup_title">⚙️ CONFIGURACIÓN</div>
-        <button type="button" class="help-btn" data-help="help-setup" data-i18n="btn_help">HELP</button>
-      </div>
-      <div class="help-panel" id="help-setup">
-        <h4 data-i18n="help_setup_title">Configuration</h4>
-        <ul id="help-setup-list"></ul>
-      </div>
-
-      <div class="row" style="margin-top: 4px;">
-        <div class="col field">
-          <div class="section-label" data-i18n="label_players">Players</div>
-          <div class="stepper">
-            <button type="button" data-stepper="num-players" data-delta="-1">−</button>
-            <div class="stepper-val" id="num-players-display">4</div>
-            <button type="button" data-stepper="num-players" data-delta="1">+</button>
-          </div>
-          <input type="hidden" id="num-players" value="4">
-        </div>
-        <div class="col field">
-          <div class="section-label" data-i18n="label_impostors">Impostors</div>
-          <div class="stepper">
-            <button type="button" data-stepper="num-impostors" data-delta="-1">−</button>
-            <div class="stepper-val" id="num-impostors-display">1</div>
-            <button type="button" data-stepper="num-impostors" data-delta="1">+</button>
-          </div>
-          <input type="hidden" id="num-impostors" value="1">
-        </div>
-      </div>
-
-      <div class="field">
-        <div class="section-label" data-i18n="label_time">Time (minutes)</div>
-        <div class="stepper">
-          <button type="button" data-stepper="game-time" data-delta="-1">−</button>
-          <div class="stepper-val" id="game-time-display">5</div>
-          <button type="button" data-stepper="game-time" data-delta="1">+</button>
-        </div>
-        <input type="hidden" id="game-time" value="5">
-      </div>
-
-      <div class="field">
-        <div class="section-label" data-i18n="label_sound">Alert Sound</div>
-        <select id="alarm-sound">
-          <option value="none" data-i18n="sound_none">No sound</option>
-          <option value="beep" data-i18n="sound_beep">Classic Beep</option>
-          <option value="bell" data-i18n="sound_bell">Bell</option>
-          <option value="digital" data-i18n="sound_digital">Digital</option>
-          <option value="alarm" data-i18n="sound_alarm">Emergency Alarm</option>
-          <option value="chime" data-i18n="sound_chime">Chime</option>
-          <option value="buzzer" data-i18n="sound_buzzer">Buzzer</option>
-        </select>
-        <div class="sound-row">
-          <span id="selected-sound-name">—</span>
-          <button type="button" class="btn btn-ghost btn-sm" id="btn-test-sound" data-i18n="btn_test_sound">Test</button>
-        </div>
-      </div>
-    </div>
-
-    <button type="button" class="btn btn-primary" id="btn-continue" data-i18n="btn_continue">Continue →</button>
-    <button type="button" class="btn btn-ghost" id="btn-history-open" style="margin-top: 12px;" data-i18n="btn_history">📜 Historial</button>
-  </div>
-
-  <!-- HISTORY -->
-  <div id="screen-history" class="screen">
-    <div class="header">
-      <div class="game-title" data-i18n="history_title">📜 HISTORIAL</div>
-    </div>
-    <div class="card">
-      <div id="history-list" class="scroll-list"></div>
-    </div>
-    <button type="button" class="btn btn-danger" id="btn-clear-history" data-i18n="btn_clear_history">🗑️ Borrar Historial</button>
-    <button type="button" class="btn btn-ghost" id="btn-history-back" style="margin-top: 12px;" data-i18n="btn_back">← Atrás</button>
-  </div>
-
-  <!-- CATEGORIES -->
-  <div id="screen-categories" class="screen">
-    <div class="header">
-      <div class="game-title" data-i18n="cats_title">📂 TEMAS</div>
-    </div>
-
-    <div class="card">
-      <div class="section-header">
-        <div class="card-title" data-i18n="cats_pick">PICK THEMES</div>
-        <button type="button" class="help-btn" data-help="help-cats" data-i18n="btn_help">HELP</button>
-      </div>
-      <div class="help-panel" id="help-cats">
-        <h4 data-i18n="help_cats_title">Categories</h4>
-        <ul id="help-cats-list"></ul>
-      </div>
-
-      <div class="cat-grid" id="cat-grid" style="margin-top: 4px;"></div>
-
-      <div id="custom-area" class="hidden">
-        <div class="section-label" data-i18n="custom_label">Your words (comma separated)</div>
-        <textarea id="custom-words" rows="3" data-i18n-placeholder="custom_placeholder"></textarea>
-      </div>
-    </div>
-
-    <button type="button" class="btn btn-primary" id="btn-to-names" data-i18n="btn_next">Next →</button>
-    <button type="button" class="btn btn-ghost" id="btn-cats-back" data-i18n="btn_back_main">← Main Menu</button>
-  </div>
-
-  <!-- NAMES -->
-  <div id="screen-names" class="screen">
-    <div class="header">
-      <div class="game-title" data-i18n="names_title">👥 JUGADORES</div>
-    </div>
-
-    <div class="card">
-      <div class="section-header">
-        <div class="card-title" data-i18n="names_assign">ASIGNAR NOMBRES</div>
-        <button type="button" class="help-btn" data-help="help-names" data-i18n="btn_help">HELP</button>
-      </div>
-      <div class="help-panel" id="help-names">
-        <h4 data-i18n="help_names_title">Player Names</h4>
-        <ul id="help-names-list"></ul>
-      </div>
-      <div class="scroll-list" id="names-list"></div>
-
-      <div class="row" style="margin-top: 12px; align-items: center;">
-        <input type="text" id="new-player-name-setup" style="flex:1; margin:0;" placeholder="Nombre..." data-i18n-placeholder="add_player_placeholder">
-        <button type="button" class="btn btn-primary btn-sm" id="btn-add-setup" style="padding: 0 18px; height: 46px; font-size: 1.4rem;">+</button>
-      </div>
-    </div>
-
-    <button type="button" class="btn btn-primary" id="btn-assign-roles" data-i18n="btn_deal_roles">Deal Roles 🎲</button>
-    <button type="button" class="btn btn-ghost" id="btn-names-back" data-i18n="btn_back">← Back</button>
-  </div>
-
-  <!-- REVEAL -->
-  <div id="screen-reveal" class="screen">
-    <div class="header">
-      <div class="game-title" data-i18n="reveal_title">🤫 ROLES</div>
-    </div>
-
-    <div class="card">
-      <div class="section-header">
-        <div class="card-title" data-i18n="reveal_secret">SECRET IDENTITY</div>
-        <button type="button" class="help-btn" data-help="help-reveal" data-i18n="btn_help">HELP</button>
-      </div>
-      <div class="help-panel" id="help-reveal">
-        <h4 data-i18n="help_reveal_title">Role Reveal</h4>
-        <ul id="help-reveal-list"></ul>
-      </div>
-      <p style="font-family: var(--font-marker); font-size:0.85rem; color:var(--gray); margin-bottom:16px; line-height:1.5;" data-i18n="reveal_instructions">Pass the device to each player. Tap your name to see your role.</p>
-      <div id="reveal-list"></div>
-    </div>
-
-    <button type="button" id="btn-begin-debate" class="btn btn-primary hidden" data-i18n="btn_start_game">🔥 Start Game</button>
-    <button type="button" class="btn btn-ghost" id="btn-reveal-back" data-i18n="btn_back">← Back</button>
-  </div>
-
-  <!-- GAME -->
-  <div id="screen-game" class="screen">
-    <div class="header">
-      <div class="game-title" data-i18n="game_title">⏳ DEBATE</div>
-    </div>
-
-    <div class="card" style="text-align:center;">
-      <div class="section-header">
-        <div class="card-title" data-i18n="game_timer_label">TIMER</div>
-        <button type="button" class="help-btn" data-help="help-game" data-i18n="btn_help">HELP</button>
-      </div>
-      <div class="help-panel" id="help-game">
-        <h4 data-i18n="help_game_title">How to Play</h4>
-        <ul id="help-game-list"></ul>
-      </div>
-
-      <div class="timer-display" id="timer-display">05:00</div>
-
-      <div class="starter-card">
-        <div class="starter-label" data-i18n="game_starts_asking">Starts asking:</div>
-        <div class="starter-name" id="starter-player">—</div>
-      </div>
-    </div>
-
-    <!-- NEW: Prominent vote button -->
-    <button type="button" class="btn btn-primary" id="btn-vote-now" data-i18n="vote_btn_start" style="margin-bottom: 12px;">🗳️ Votar Ahora</button>
-
-    <button type="button" class="btn btn-ghost" id="btn-pause" data-i18n="btn_pause">⏸ Pause</button>
-    <button type="button" class="btn btn-ghost" id="btn-manage" style="margin-top: 12px;" data-i18n="btn_manage_players">👥 Gestionar Jugadores</button>
-    <button type="button" class="btn btn-danger" id="btn-reveal-end" style="margin-top: 12px;" data-i18n="btn_reveal_end">👁️ Revelar y Terminar</button>
-
-    <div class="btn-row">
-      <button type="button" class="btn btn-ghost" id="btn-new-game" data-i18n="btn_new_game">🔄 New Game</button>
-      <button type="button" class="btn btn-danger" id="btn-main-menu" data-i18n="btn_main_menu">🏠 Menu</button>
-    </div>
-  </div>
-
-  <!-- VOTING SCREEN -->
-  <div id="screen-vote" class="screen">
-    <div class="header">
-      <div class="game-title" data-i18n="vote_title">🗳️ VOTACIÓN</div>
-    </div>
-
-    <div class="vote-progress" id="vote-progress">1 / 4</div>
-
-    <!-- Turn card -->
-    <div class="card" id="vote-turn-card">
-      <div class="vote-turn-label" data-i18n="vote_turn">Turno de:</div>
-      <div class="vote-turn-name" id="vote-turn-name">—</div>
-      <p class="vote-instruction" data-i18n="vote_instruction">Toca a quién crees que es el impostor</p>
-      <div class="vote-options" id="vote-options"></div>
-    </div>
-
-    <!-- Confirmation card -->
-    <div class="card hidden" id="vote-confirm-card" style="text-align:center;">
-      <div class="vote-confirm-icon">✓</div>
-      <div class="vote-confirm-text" data-i18n="vote_registered">¡Voto registrado!</div>
-      <div class="vote-confirm-who" id="vote-confirm-who"></div>
-      <button type="button" class="btn btn-primary" id="btn-vote-next" data-i18n="vote_pass_next">Pasar al siguiente →</button>
-    </div>
-  </div>
-
-  <div class="app-footer">Impostor Ultimate · 2026</div>
-</div>
-
-<script>
-'use strict';
-
-/* ============================================================
-   TRANSLATIONS
-   ============================================================ */
-const LANGUAGES = [
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'pt', name: 'Português', flag: '🇧🇷' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-  { code: 'ja', name: '日本語', flag: '🇯🇵' },
-  { code: 'ko', name: '한국어', flag: '🇰🇷' },
-  { code: 'zh', name: '中文', flag: '🇨🇳' },
-  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-  { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
-];
-
-const I18N = {
-  es: {
-    lang_pick: 'Elige tu idioma', setup_title: '⚙️ Configuración', tagline: 'Edición Definitiva',
-    label_players: 'Jugadores', label_impostors: 'Impostores', label_time: 'Tiempo (minutos)', label_sound: 'Sonido de Alerta',
-    sound_none: 'Sin sonido', sound_beep: 'Beep Clásico', sound_bell: 'Campana', sound_digital: 'Digital', sound_alarm: 'Alarma de Emergencia', sound_chime: 'Campanilla', sound_buzzer: 'Buzzer',
-    btn_test_sound: 'Probar', btn_continue: 'Continuar →', btn_help: 'Ayuda', btn_next: 'Siguiente →', btn_back_main: '← Menú Principal', btn_back: '← Atrás',
-    btn_deal_roles: 'Repartir Roles 🎲', btn_start_game: '🔥 Empezar Juego', btn_pause: '⏸ Pausar', btn_resume: '▶ Reanudar', btn_new_game: '🔄 Nueva Partida', btn_main_menu: '🏠 Menú',
-    cats_title: '📂 Temas', cats_pick: 'Elige Categorías', custom_label: 'Tus palabras (separadas por coma)', custom_placeholder: 'Ej: Mi Casa, La Oficina, El Jefe...',
-    names_title: '👥 Jugadores', names_assign: 'Asignar Nombres',
-    reveal_title: '🤫 Roles', reveal_secret: 'Identidad Secreta', reveal_instructions: 'Pasa el dispositivo a cada jugador. Toca tu nombre para ver tu rol.',
-    game_title: '⏳ Debate', game_timer_label: 'Temporizador', game_starts_asking: 'Empieza preguntando:',
-    role_civil: 'Eres Civil', role_impostor: 'Eres el Impostor', civil_word_label: 'La palabra secreta es:',
-    civil_hint: 'Haz preguntas sobre esta palabra sin revelarla directamente. Descubre a los impostores.', impostor_hint: 'No conoces la palabra. Finge que sí la sabes. Escucha a los civiles y da respuestas vagas pero creíbles.',
-    btn_understood: 'Entendido ✓', role_seen: 'Ver Rol', role_done: 'Rol Visto ✓',
-    cat_varied: '🎲 Variado', cat_places: '✈️ Lugares', cat_food: '🍕 Comidas', cat_animals: '🦁 Animales', cat_movies: '🎬 Películas', cat_sports: '⚽ Deportes', cat_anime: '🎌 Anime', cat_games: '🎮 Videojuegos', cat_custom: '✏️ Personalizado',
-    time_up_msg: '¡Tiempo terminado!',
-    err_min_players: 'Mínimo 3 jugadores.', err_impostors: 'Debe haber más jugadores que impostores.', err_no_categories: 'Selecciona al menos una categoría.', err_no_words: 'No hay palabras disponibles.',
-    confirm_new: '¿Terminar partida actual y jugar otra con los mismos jugadores?', confirm_reset: '¿Volver al menú principal? Se borrarán los nombres.',
-    help_setup_title: 'Configuración', help_setup_items: ['<strong>Jugadores:</strong> Número total de participantes (mínimo 3)', '<strong>Impostores:</strong> Cuántos serán impostores (menos que jugadores)', '<strong>Tiempo:</strong> Duración del debate en minutos', '<strong>Sonido:</strong> Suena al terminar el tiempo'],
-    help_cats_title: 'Categorías', help_cats_items: ['Selecciona una o varias categorías', 'Cuantas más, más variadas serán las palabras', 'Personalizado: escribe tus propias palabras'],
-    help_names_title: 'Nombres', help_names_items: ['Asigna un nombre a cada jugador', 'Usa nombres o apodos distintivos'],
-    help_reveal_title: 'Revelación', help_reveal_items: ['Civiles: ven la palabra secreta', 'Impostores: NO ven la palabra', 'No reveles tu rol a los demás'],
-    help_game_title: 'Cómo Jugar', help_game_items: ['Civiles: descubran a los impostores', 'Impostores: finjan conocer la palabra', 'Al terminar el tiempo, voten'],
-    player_default: 'Jugador',
-    btn_manage_players: '👥 Gestionar Jugadores', manage_players_title: 'Gestionar Jugadores', add_player_placeholder: 'Nombre del nuevo jugador...', btn_close: 'Cerrar', confirm_remove: '¿Eliminar a este jugador?', added_player_msg: 'Se unió como CIVIL.',
-    btn_reveal_end: '👁️ Revelar y Terminar', confirm_reveal: 'Si revelas la palabra y al impostor ahora, los CIVILES PIERDEN automáticamente. ¿Deseas revelar de todas formas?',
-    end_game_title: 'Fin del Juego', end_game_civilians_lose: 'Los civiles no lograron descubrir al impostor a tiempo.', label_word: 'Palabra:', label_impostor_was: 'Impostor(es):', label_players_were: 'Jugadores:',
-    btn_history: '📜 Historial', history_title: '📜 Historial', history_empty: 'No hay partidas guardadas.', btn_clear_history: '🗑️ Borrar Historial', confirm_clear_history: '¿Borrar todo el historial?',
-    new_impostor: 'ahora es un Impostor.',
-    /* VOTE */
-    vote_title: '🗳️ Votación',
-    vote_turn: 'Turno de:',
-    vote_instruction: 'Toca a quién crees que es el impostor',
-    vote_registered: '¡Voto registrado!',
-    vote_pass_next: 'Pasar al siguiente →',
-    vote_expelled: 'Expulsado:',
-    vote_was_impostor: '✗ ERA EL IMPOSTOR',
-    vote_was_civil: '✓ ERA CIVIL',
-    vote_civilians_win: '¡Civiles Ganan!',
-    vote_impostors_win: '¡Impostores Ganan!',
-    vote_tie_msg: 'Empate en la votación. Nadie fue expulsado. Los impostores ganan la ronda.',
-    vote_btn_start: '🗳️ Votar Ahora',
-    vote_count: 'votos',
-    btn_next_round: '🔄 Siguiente Ronda'
-  },
-  en: {
-    lang_pick: 'Select your language', setup_title: '⚙️ Setup', tagline: 'Ultimate Edition',
-    label_players: 'Players', label_impostors: 'Impostors', label_time: 'Time (minutes)', label_sound: 'Alert Sound',
-    sound_none: 'No sound', sound_beep: 'Classic Beep', sound_bell: 'Bell', sound_digital: 'Digital', sound_alarm: 'Emergency Alarm', sound_chime: 'Chime', sound_buzzer: 'Buzzer',
-    btn_test_sound: 'Test', btn_continue: 'Continue →', btn_help: 'Help', btn_next: 'Next →', btn_back_main: '← Main Menu', btn_back: '← Back',
-    btn_deal_roles: 'Deal Roles 🎲', btn_start_game: '🔥 Start Game', btn_pause: '⏸ Pause', btn_resume: '▶ Resume', btn_new_game: '🔄 New Game', btn_main_menu: '🏠 Menu',
-    cats_title: '📂 Topics', cats_pick: 'Pick Themes', custom_label: 'Your words (comma separated)', custom_placeholder: 'E.g: My House, The Office, My Boss...',
-    names_title: '👥 Players', names_assign: 'Assign Names',
-    reveal_title: '🤫 Roles', reveal_secret: 'Secret Identity', reveal_instructions: 'Pass the device to each player. Tap your name to see your role.',
-    game_title: '⏳ Debate', game_timer_label: 'Timer', game_starts_asking: 'Starts asking:',
-    role_civil: 'You are Civil', role_impostor: 'You are the Impostor', civil_word_label: 'The secret word is:',
-    civil_hint: 'Ask questions about this word without revealing it directly. Find the impostors.', impostor_hint: "You don't know the word. Pretend you do. Listen to the civilians and give vague but believable answers.",
-    btn_understood: 'Got it ✓', role_seen: 'See Role', role_done: 'Role Seen ✓',
-    cat_varied: '🎲 Mixed', cat_places: '✈️ Places', cat_food: '🍕 Food', cat_animals: '🦁 Animals', cat_movies: '🎬 Movies', cat_sports: '⚽ Sports', cat_anime: '🎌 Anime', cat_games: '🎮 Games', cat_custom: '✏️ Custom',
-    time_up_msg: "Time's up!",
-    err_min_players: 'Minimum 3 players.', err_impostors: 'There must be more players than impostors.', err_no_categories: 'Select at least one category.', err_no_words: 'No words available.',
-    confirm_new: 'End current game and play another with the same players?', confirm_reset: 'Return to main menu? Names will be cleared.',
-    help_setup_title: 'Configuration', help_setup_items: ['<strong>Players:</strong> Total participants (min 3)', '<strong>Impostors:</strong> How many will be impostors (less than players)', '<strong>Time:</strong> Debate duration in minutes', '<strong>Sound:</strong> Plays when time runs out'],
-    help_cats_title: 'Categories', help_cats_items: ['Select one or more categories', 'More categories = more varied words', 'Custom: write your own words'],
-    help_names_title: 'Names', help_names_items: ['Assign a name to each player', 'Use distinctive names or nicknames'],
-    help_reveal_title: 'Role Reveal', help_reveal_items: ['Civilians: see the secret word', 'Impostors: do NOT see the word', "Don't reveal your role to others"],
-    help_game_title: 'How to Play', help_game_items: ['Civilians: find the impostors', 'Impostors: pretend to know the word', 'When time is up, vote'],
-    player_default: 'Player',
-    btn_manage_players: '👥 Manage Players', manage_players_title: 'Manage Players', add_player_placeholder: 'New player name...', btn_close: 'Close', confirm_remove: 'Remove this player?', added_player_msg: 'Joined as CIVIL.',
-    btn_reveal_end: '👁️ Reveal & End', confirm_reveal: 'If you reveal the word and the impostor now, the CIVILIANS LOSE automatically. Do you want to reveal anyway?',
-    end_game_title: 'Game Over', end_game_civilians_lose: 'The civilians failed to discover the impostor in time.', label_word: 'Word:', label_impostor_was: 'Impostor(s):', label_players_were: 'Players:',
-    btn_history: '📜 History', history_title: '📜 History', history_empty: 'No saved matches.', btn_clear_history: '🗑️ Clear History', confirm_clear_history: 'Delete all history?',
-    new_impostor: 'is now an Impostor.',
-    /* VOTE */
-    vote_title: '🗳️ Voting',
-    vote_turn: 'Turn of:',
-    vote_instruction: 'Tap who you think is the impostor',
-    vote_registered: 'Vote registered!',
-    vote_pass_next: 'Pass to next →',
-    vote_expelled: 'Expelled:',
-    vote_was_impostor: '✗ WAS THE IMPOSTOR',
-    vote_was_civil: '✓ WAS CIVIL',
-    vote_civilians_win: 'Civilians Win!',
-    vote_impostors_win: 'Impostors Win!',
-    vote_tie_msg: 'Vote tied. Nobody expelled. Impostors win the round.',
-    vote_btn_start: '🗳️ Vote Now',
-    vote_count: 'votes',
-    btn_next_round: '🔄 Next Round'
-  },
-  pt: { lang_pick: 'Escolha seu idioma', setup_title: '⚙️ Configuração', tagline: 'Edição Ultimate', label_players: 'Jogadores', label_impostors: 'Impostores', label_time: 'Tempo (minutos)', label_sound: 'Som de Alerta', sound_none: 'Sem som', btn_test_sound: 'Testar', btn_continue: 'Continuar →', btn_help: 'Ajuda', btn_next: 'Próximo →', btn_back_main: '← Menu Principal', btn_back: '← Voltar', btn_deal_roles: 'Distribuir Papéis 🎲', btn_start_game: '🔥 Começar Jogo', btn_pause: '⏸ Pausar', btn_resume: '▶ Retomar', btn_new_game: '🔄 Nova Partida', btn_main_menu: '🏠 Menu', cats_title: '📂 Temas', cats_pick: 'Escolha Categorias', names_title: '👥 Jogadores', names_assign: 'Atribuir Nomes', reveal_title: '🤫 Papéis', reveal_secret: 'Identidade Secreta', game_title: '⏳ Debate', game_timer_label: 'Cronômetro', game_starts_asking: 'Começa perguntando:', role_civil: 'Você é Civil', role_impostor: 'Você é o Impostor', civil_word_label: 'A palavra secreta é:', btn_understood: 'Entendido ✓', role_seen: 'Ver Papel', role_done: 'Papel Visto ✓', cat_varied: '🎲 Variado', cat_places: '✈️ Lugares', cat_food: '🍕 Comidas', cat_animals: '🦁 Animais', cat_movies: '🎬 Filmes', cat_sports: '⚽ Esportes', cat_anime: '🎌 Anime', cat_games: '🎮 Jogos', cat_custom: '✏️ Personalizado', player_default: 'Jogador', btn_close: 'Fechar', vote_title: '🗳️ Votação', vote_turn: 'Turno de:', vote_instruction: 'Toque em quem você acha que é o impostor', vote_registered: 'Voto registrado!', vote_pass_next: 'Passar para o próximo →', vote_expelled: 'Expulso:', vote_was_impostor: '✗ ERA O IMPOSTOR', vote_was_civil: '✓ ERA CIVIL', vote_civilians_win: 'Civis Ganham!', vote_impostors_win: 'Impostores Ganham!', vote_tie_msg: 'Empate. Ninguém expulso. Impostores ganham a ronda.', vote_btn_start: '🗳️ Votar Agora', btn_next_round: '🔄 Próxima Ronda' },
-  fr: { lang_pick: 'Choisissez votre langue', setup_title: '⚙️ Configuration', tagline: 'Édition Ultime', label_players: 'Joueurs', label_impostors: 'Imposteurs', label_time: 'Temps (minutes)', label_sound: 'Son d\'alerte', sound_none: 'Sans son', btn_test_sound: 'Tester', btn_continue: 'Continuer →', btn_help: 'Aide', btn_next: 'Suivant →', btn_back_main: '← Menu Principal', btn_back: '← Retour', btn_deal_roles: 'Distribuer les Rôles 🎲', btn_start_game: '🔥 Commencer', btn_pause: '⏸ Pause', btn_resume: '▶ Reprendre', btn_new_game: '🔄 Nouvelle Partie', btn_main_menu: '🏠 Menu', cats_title: '📂 Thèmes', cats_pick: 'Choisir les Thèmes', names_title: '👥 Joueurs', names_assign: 'Attribuer des Noms', reveal_title: '🤫 Rôles', reveal_secret: 'Identité Secrète', game_title: '⏳ Débat', game_timer_label: 'Chronomètre', game_starts_asking: 'Commence par demander:', role_civil: 'Vous êtes Civil', role_impostor: 'Vous êtes l\'Imposteur', civil_word_label: 'Le mot secret est:', btn_understood: 'Compris ✓', role_seen: 'Voir le Rôle', role_done: 'Rôle Vu ✓', cat_varied: '🎲 Varié', cat_places: '✈️ Lieux', cat_food: '🍕 Nourriture', cat_animals: '🦁 Animaux', cat_movies: '🎬 Films', cat_sports: '⚽ Sports', cat_anime: '🎌 Anime', cat_games: '🎮 Jeux', cat_custom: '✏️ Personnalisé', player_default: 'Joueur', btn_close: 'Fermer', vote_title: '🗳️ Vote', vote_turn: 'Tour de :', vote_instruction: 'Touchez qui vous pensez être l\'imposteur', vote_registered: 'Vote enregistré!', vote_pass_next: 'Passer au suivant →', vote_expelled: 'Expulsé:', vote_was_impostor: '✗ ÉTAIT L\'IMPOSTEUR', vote_was_civil: '✓ ÉTAIT CIVIL', vote_civilians_win: 'Les Civils Gagnent!', vote_impostors_win: 'Les Imposteurs Gagnent!', vote_tie_msg: 'Égalité. Personne expulsé. Les imposteurs gagnent.', vote_btn_start: '🗳️ Voter Maintenant', btn_next_round: '🔄 Manche Suivante' },
-  de: { lang_pick: 'Sprache wählen', setup_title: '⚙️ Einstellungen', tagline: 'Ultimate Edition', label_players: 'Spieler', label_impostors: 'Impostoren', label_time: 'Zeit (Minuten)', label_sound: 'Alarmsound', sound_none: 'Kein Ton', btn_test_sound: 'Testen', btn_continue: 'Weiter →', btn_help: 'Hilfe', btn_next: 'Weiter →', btn_back_main: '← Hauptmenü', btn_back: '← Zurück', btn_deal_roles: 'Rollen verteilen 🎲', btn_start_game: '🔥 Spiel starten', btn_pause: '⏸ Pause', btn_resume: '▶ Fortsetzen', btn_new_game: '🔄 Neues Spiel', btn_main_menu: '🏠 Menü', cats_title: '📂 Themen', cats_pick: 'Themen Wählen', names_title: '👥 Spieler', names_assign: 'Namen Zuweisen', reveal_title: '🤫 Rollen', reveal_secret: 'Geheime Identität', game_title: '⏳ Debatte', game_timer_label: 'Timer', game_starts_asking: 'Beginnt zu fragen:', role_civil: 'Du bist Zivilist', role_impostor: 'Du bist der Impostor', civil_word_label: 'Das Geheimwort ist:', btn_understood: 'Verstanden ✓', role_seen: 'Rolle sehen', role_done: 'Rolle gesehen ✓', cat_varied: '🎲 Gemischt', cat_places: '✈️ Orte', cat_food: '🍕 Essen', cat_animals: '🦁 Tiere', cat_movies: '🎬 Filme', cat_sports: '⚽ Sport', cat_anime: '🎌 Anime', cat_games: '🎮 Spiele', cat_custom: '✏️ Benutzerdefiniert', player_default: 'Spieler', btn_close: 'Schließen', vote_title: '🗳️ Abstimmung', vote_turn: 'Am Zug:', vote_instruction: 'Tippe, wer deiner Meinung nach der Impostor ist', vote_registered: 'Stimme registriert!', vote_pass_next: 'Weiter zum Nächsten →', vote_expelled: 'Rausgeworfen:', vote_was_impostor: '✗ WAR DER IMPOSTOR', vote_was_civil: '✓ WAR ZIVILIST', vote_civilians_win: 'Zivilisten Gewinnen!', vote_impostors_win: 'Impostoren Gewinnen!', vote_tie_msg: 'Unentschieden. Niemand rausgeworfen. Impostoren gewinnen.', vote_btn_start: '🗳️ Jetzt Abstimmen', btn_next_round: '🔄 Nächste Runde' },
-  it: { lang_pick: 'Scegli la tua lingua', setup_title: '⚙️ Configurazione', tagline: 'Edizione Ultimate', label_players: 'Giocatori', label_impostors: 'Impostori', label_time: 'Tempo (minuti)', label_sound: 'Suono di Allerta', sound_none: 'Nessun suono', btn_test_sound: 'Prova', btn_continue: 'Continua →', btn_help: 'Aiuto', btn_next: 'Avanti →', btn_back_main: '← Menu Principale', btn_back: '← Indietro', btn_deal_roles: 'Distribuire i Ruoli 🎲', btn_start_game: '🔥 Inizia il Gioco', btn_pause: '⏸ Pausa', btn_resume: '▶ Riprendi', btn_new_game: '🔄 Nuova Partita', btn_main_menu: '🏠 Menu', cats_title: '📂 Temi', cats_pick: 'Scegli Temi', names_title: '👥 Giocatori', names_assign: 'Assegna Nomi', reveal_title: '🤫 Ruoli', reveal_secret: 'Identità Segreta', game_title: '⏳ Dibattito', game_timer_label: 'Timer', game_starts_asking: 'Inizia a fare domande:', role_civil: 'Sei Civile', role_impostor: 'Sei l\'Impostore', civil_word_label: 'La parola segreta è:', btn_understood: 'Capito ✓', role_seen: 'Vedi Ruolo', role_done: 'Ruolo Visto ✓', cat_varied: '🎲 Misto', cat_places: '✈️ Luoghi', cat_food: '🍕 Cibo', cat_animals: '🦁 Animali', cat_movies: '🎬 Film', cat_sports: '⚽ Sport', cat_anime: '🎌 Anime', cat_games: '🎮 Giochi', cat_custom: '✏️ Personalizzato', player_default: 'Giocatore', btn_close: 'Chiudi', vote_title: '🗳️ Votazione', vote_turn: 'Turno di:', vote_instruction: 'Tocca chi pensi sia l\'impostore', vote_registered: 'Voto registrato!', vote_pass_next: 'Passa al prossimo →', vote_expelled: 'Espulso:', vote_was_impostor: '✗ ERA L\'IMPOSTORE', vote_was_civil: '✓ ERA CIVILE', vote_civilians_win: 'Vincono i Civili!', vote_impostors_win: 'Vincono gli Impostori!', vote_tie_msg: 'Pareggio. Nessuno espulso. Vincono gli impostori.', vote_btn_start: '🗳️ Vota Ora', btn_next_round: '🔄 Prossimo Round' },
-  ru: { lang_pick: 'Выберите язык', setup_title: '⚙️ Настройки', tagline: 'Ультимативное издание', label_players: 'Игроки', label_impostors: 'Самозванцы', label_time: 'Время (мин)', label_sound: 'Звук оповещения', sound_none: 'Без звука', btn_test_sound: 'Тест', btn_continue: 'Продолжить →', btn_help: 'Помощь', btn_next: 'Далее →', btn_back_main: '← Главное меню', btn_back: '← Назад', btn_deal_roles: 'Раздать роли 🎲', btn_start_game: '🔥 Начать игру', btn_pause: '⏸ Пауза', btn_resume: '▶ Продолжить', btn_new_game: '🔄 Новая игра', btn_main_menu: '🏠 Меню', cats_title: '📂 Темы', cats_pick: 'Выбрать темы', names_title: '👥 Игроки', names_assign: 'Назначить имена', reveal_title: '🤫 Роли', reveal_secret: 'Тайная личность', game_title: '⏳ Дебаты', game_timer_label: 'Таймер', game_starts_asking: 'Начинает задавать вопросы:', role_civil: 'Вы мирный', role_impostor: 'Вы самозванец', civil_word_label: 'Секретное слово:', btn_understood: 'Понятно ✓', role_seen: 'Посмотреть роль', role_done: 'Роль просмотрена ✓', cat_varied: '🎲 Разное', cat_places: '✈️ Места', cat_food: '🍕 Еда', cat_animals: '🦁 Животные', cat_movies: '🎬 Фильмы', cat_sports: '⚽ Спорт', cat_anime: '🎌 Аниме', cat_games: '🎮 Игры', cat_custom: '✏️ Пользовательский', player_default: 'Игрок', btn_close: 'Закрыть', vote_title: '🗳️ Голосование', vote_turn: 'Ход:', vote_instruction: 'Нажмите на того, кто по-вашему самозванец', vote_registered: 'Голос учтён!', vote_pass_next: 'Передать следующему →', vote_expelled: 'Изгнан:', vote_was_impostor: '✗ БЫЛ САМОЗВАНЦЕМ', vote_was_civil: '✓ БЫЛ МИРНЫМ', vote_civilians_win: 'Мирные Побеждают!', vote_impostors_win: 'Самозванцы Побеждают!', vote_tie_msg: 'Ничья. Никто не изгнан. Самозванцы побеждают.', vote_btn_start: '🗳️ Голосовать', btn_next_round: '🔄 Следующий раунд' },
-  ja: { lang_pick: '言語を選択してください', setup_title: '⚙️ 設定', tagline: 'アルティメット版', label_players: 'プレイヤー数', label_impostors: 'インポスター数', label_time: '時間（分）', label_sound: '警告音', sound_none: '音なし', btn_test_sound: 'テスト', btn_continue: '続ける →', btn_help: 'ヘルプ', btn_next: '次へ →', btn_back_main: '← メインメニュー', btn_back: '← 戻る', btn_deal_roles: '役割を配る 🎲', btn_start_game: '🔥 ゲーム開始', btn_pause: '⏸ 一時停止', btn_resume: '▶ 再開', btn_new_game: '🔄 新しいゲーム', btn_main_menu: '🏠 メニュー', cats_title: '📂 テーマ', cats_pick: 'テーマを選ぶ', names_title: '👥 プレイヤー', names_assign: '名前を割り当て', reveal_title: '🤫 役割', reveal_secret: '秘密の身元', game_title: '⏳ 議論', game_timer_label: 'タイマー', game_starts_asking: '最初に質問するのは:', role_civil: 'あなたは市民です', role_impostor: 'あなたがインポスターです', civil_word_label: '秘密の言葉は:', btn_understood: '了解 ✓', role_seen: '役割を見る', role_done: '確認済み ✓', cat_varied: '🎲 ミックス', cat_places: '✈️ 場所', cat_food: '🍕 食べ物', cat_animals: '🦁 動物', cat_movies: '🎬 映画', cat_sports: '⚽ スポーツ', cat_anime: '🎌 アニメ', cat_games: '🎮 ゲーム', cat_custom: '✏️ カスタム', player_default: 'プレイヤー', btn_close: '閉じる', vote_title: '🗳️ 投票', vote_turn: '投票者:', vote_instruction: 'インポスターだと思う人をタップ', vote_registered: '投票完了！', vote_pass_next: '次の人へ →', vote_expelled: '追放:', vote_was_impostor: '✗ インポスターだった', vote_was_civil: '✓ 市民だった', vote_civilians_win: '市民の勝利！', vote_impostors_win: 'インポスターの勝利！', vote_tie_msg: '同票。誰も追放されず。インポスターの勝利。', vote_btn_start: '🗳️ 今すぐ投票', btn_next_round: '🔄 次のラウンド' },
-  ko: { lang_pick: '언어를 선택하세요', setup_title: '⚙️ 설정', tagline: '얼티메이트 에디션', label_players: '플레이어 수', label_impostors: '임포스터 수', label_time: '시간 (분)', label_sound: '경고음', sound_none: '소리 없음', btn_test_sound: '테스트', btn_continue: '계속 →', btn_help: '도움말', btn_next: '다음 →', btn_back_main: '← 메인 메뉴', btn_back: '← 뒤로', btn_deal_roles: '역할 배분 🎲', btn_start_game: '🔥 게임 시작', btn_pause: '⏸ 일시 정지', btn_resume: '▶ 재개', btn_new_game: '🔄 새 게임', btn_main_menu: '🏠 메뉴', cats_title: '📂 주제', cats_pick: '테마 선택', names_title: '👥 플레이어', names_assign: '이름 지정', reveal_title: '🤫 역할', reveal_secret: '비밀 신원', game_title: '⏳ 토론', game_timer_label: '타이머', game_starts_asking: '먼저 질문하는 사람:', role_civil: '당신은 시민입니다', role_impostor: '당신이 임포스터입니다', civil_word_label: '비밀 단어는:', btn_understood: '알겠습니다 ✓', role_seen: '역할 보기', role_done: '역할 확인 ✓', cat_varied: '🎲 다양', cat_places: '✈️ 장소', cat_food: '🍕 음식', cat_animals: '🦁 동물', cat_movies: '🎬 영화', cat_sports: '⚽ 스포츠', cat_anime: '🎌 애니메', cat_games: '🎮 게임', cat_custom: '✏️ 커스텀', player_default: '플레이어', btn_close: '닫기', vote_title: '🗳️ 투표', vote_turn: '차례:', vote_instruction: '임포스터라고 생각하는 사람을 탭하세요', vote_registered: '투표 완료!', vote_pass_next: '다음 사람에게 →', vote_expelled: '추방:', vote_was_impostor: '✗ 임포스터였음', vote_was_civil: '✓ 시민이었음', vote_civilians_win: '시민 승리!', vote_impostors_win: '임포스터 승리!', vote_tie_msg: '동점. 아무도 추방되지 않음. 임포스터 승리.', vote_btn_start: '🗳️ 지금 투표', btn_next_round: '🔄 다음 라운드' },
-  zh: { lang_pick: '请选择语言', setup_title: '⚙️ 设置', tagline: '终极版', label_players: '玩家数量', label_impostors: '内奸数量', label_time: '时间（分钟）', label_sound: '警报声音', sound_none: '无声音', btn_test_sound: '测试', btn_continue: '继续 →', btn_help: '帮助', btn_next: '下一步 →', btn_back_main: '← 主菜单', btn_back: '← 返回', btn_deal_roles: '分配角色 🎲', btn_start_game: '🔥 开始游戏', btn_pause: '⏸ 暂停', btn_resume: '▶ 继续', btn_new_game: '🔄 新游戏', btn_main_menu: '🏠 菜单', cats_title: '📂 主题', cats_pick: '选择主题', names_title: '👥 玩家', names_assign: '分配名称', reveal_title: '🤫 角色', reveal_secret: '秘密身份', game_title: '⏳ 辩论', game_timer_label: '计时器', game_starts_asking: '先开始提问：', role_civil: '你是平民', role_impostor: '你是内奸', civil_word_label: '秘密词语是：', btn_understood: '明白了 ✓', role_seen: '查看角色', role_done: '已查看 ✓', cat_varied: '🎲 综合', cat_places: '✈️ 地点', cat_food: '🍕 食物', cat_animals: '🦁 动物', cat_movies: '🎬 电影', cat_sports: '⚽ 运动', cat_anime: '🎌 动漫', cat_games: '🎮 游戏', cat_custom: '✏️ 自定义', player_default: '玩家', btn_close: '关闭', vote_title: '🗳️ 投票', vote_turn: '轮到：', vote_instruction: '点击你认为的内奸', vote_registered: '投票已记录！', vote_pass_next: '传给下一位 →', vote_expelled: '被淘汰：', vote_was_impostor: '✗ 是内奸', vote_was_civil: '✓ 是平民', vote_civilians_win: '平民胜利！', vote_impostors_win: '内奸胜利！', vote_tie_msg: '投票平局。无人被淘汰。内奸获胜。', vote_btn_start: '🗳️ 立即投票', btn_next_round: '🔄 下一轮' },
-  ar: { lang_pick: 'اختر لغتك', setup_title: '⚙️ الإعدادات', tagline: 'الإصدار النهائي', label_players: 'اللاعبون', label_impostors: 'المتسللون', label_time: 'الوقت (دقائق)', label_sound: 'صوت التنبيه', sound_none: 'بدون صوت', btn_test_sound: 'اختبار', btn_continue: 'متابعة →', btn_help: 'مساعدة', btn_next: 'التالي →', btn_back_main: '→ القائمة الرئيسية', btn_back: '→ رجوع', btn_deal_roles: 'توزيع الأدوار 🎲', btn_start_game: '🔥 ابدأ اللعبة', btn_pause: '⏸ إيقاف مؤقت', btn_resume: '▶ استئناف', btn_new_game: '🔄 لعبة جديدة', btn_main_menu: '🏠 القائمة', cats_title: '📂 المواضيع', cats_pick: 'اختر الفئات', names_title: '👥 اللاعبون', names_assign: 'تعيين الأسماء', reveal_title: '🤫 الأدوار', reveal_secret: 'الهوية السرية', game_title: '⏳ النقاش', game_timer_label: 'المؤقت', game_starts_asking: 'يبدأ بالسؤال:', role_civil: 'أنت مدني', role_impostor: 'أنت المتسلل', civil_word_label: 'الكلمة السرية هي:', btn_understood: 'فهمت ✓', role_seen: 'انظر الدور', role_done: 'شوهد الدور ✓', cat_varied: '🎲 متنوع', cat_places: '✈️ أماكن', cat_food: '🍕 طعام', cat_animals: '🦁 حيوانات', cat_movies: '🎬 أفلام', cat_sports: '⚽ رياضة', cat_anime: '🎌 أنمي', cat_games: '🎮 ألعاب', cat_custom: '✏️ مخصص', player_default: 'لاعب', btn_close: 'إغلاق', vote_title: '🗳️ التصويت', vote_turn: 'دور:', vote_instruction: 'اضغط على من تظن أنه المتسلل', vote_registered: 'تم تسجيل الصوت!', vote_pass_next: 'مرر للتالي →', vote_expelled: 'مُستبعد:', vote_was_impostor: '✗ كان المتسلل', vote_was_civil: '✓ كان مدنياً', vote_civilians_win: 'فاز المدنيون!', vote_impostors_win: 'فاز المتسللون!', vote_tie_msg: 'تعادل. لم يُستبعد أحد. فاز المتسللون.', vote_btn_start: '🗳️ صوّت الآن', btn_next_round: '🔄 الجولة التالية' },
-  tr: { lang_pick: 'Dilinizi seçin', setup_title: '⚙️ Ayarlar', tagline: 'Ultimate Sürüm', label_players: 'Oyuncular', label_impostors: 'Sahtekârlar', label_time: 'Süre (dakika)', label_sound: 'Uyarı Sesi', sound_none: 'Sessiz', btn_test_sound: 'Test', btn_continue: 'Devam →', btn_help: 'Yardım', btn_next: 'İleri →', btn_back_main: '← Ana Menü', btn_back: '← Geri', btn_deal_roles: 'Rolleri Dağıt 🎲', btn_start_game: '🔥 Oyunu Başlat', btn_pause: '⏸ Duraklat', btn_resume: '▶ Devam', btn_new_game: '🔄 Yeni Oyun', btn_main_menu: '🏠 Menü', cats_title: '📂 Temalar', cats_pick: 'Tema Seç', names_title: '👥 Oyuncular', names_assign: 'İsimleri Atayın', reveal_title: '🤫 Roller', reveal_secret: 'Gizli Kimlik', game_title: '⏳ Tartışma', game_timer_label: 'Süre', game_starts_asking: 'İlk soru soran:', role_civil: 'Sivilsiniz', role_impostor: 'Sahtekârsınız', civil_word_label: 'Gizli kelime:', btn_understood: 'Anladım ✓', role_seen: 'Rolü Gör', role_done: 'Rol Görüldü ✓', cat_varied: '🎲 Karışık', cat_places: '✈️ Yerler', cat_food: '🍕 Yiyecekler', cat_animals: '🦁 Hayvanlar', cat_movies: '🎬 Filmler', cat_sports: '⚽ Spor', cat_anime: '🎌 Anime', cat_games: '🎮 Oyunlar', cat_custom: '✏️ Özel', player_default: 'Oyuncu', btn_close: 'Kapat', vote_title: '🗳️ Oylama', vote_turn: 'Sıra:', vote_instruction: 'Sahtekâr olduğunu düşündüğün kişiye dokun', vote_registered: 'Oy kaydedildi!', vote_pass_next: 'Sıradakine geç →', vote_expelled: 'Kovuldu:', vote_was_impostor: '✗ SAHTEKÂRDI', vote_was_civil: '✓ SİVİLDİ', vote_civilians_win: 'Siviller Kazandı!', vote_impostors_win: 'Sahtekârlar Kazandı!', vote_tie_msg: 'Berabere. Kimse kovulmadı. Sahtekârlar kazandı.', vote_btn_start: '🗳️ Şimdi Oy Ver', btn_next_round: '🔄 Sonraki Tur' },
-};
-
-Object.keys(I18N).forEach(code => {
-  if (code === 'en') return;
-  I18N[code] = Object.assign({}, I18N.en, I18N[code]);
-});
-
-/* ============================================================
-   DATABASE
-   ============================================================ */
-const DATABASE = {
-  Variado: ["Playa","Escuela","Hospital","Pizza","Perro","Titanic","Fútbol","Mario Bros","Goku","Batman","Cine","Avión"],
-  Lugares: ["Playa","Montaña","Bosque","Desierto","Ciudad","Isla","Cascada","Selva","Templo","Catedral","Castillo","Palacio","Mercado","Plaza","Parque","Museo","Biblioteca","Universidad","Estadio","Aeropuerto","Puerto","Zoológico","Acuario","Restaurante","Hotel","Rascacielos","Cueva","Volcán","Crucero","Parque nacional"],
-  Comidas: ["Pizza","Hamburguesa","Taco","Burrito","Quesadilla","Enchiladas","Pozole","Tamales","Chilaquiles","Mole","Sushi","Ramen","Tempura","Curry","Pad thai","Paella","Pasta","Lasaña","Spaghetti","Ceviche","Arepa","Empanada","Feijoada","Asado","Pollo rostizado","Tarta de manzana","Helado","Brownie","Croissant","Sandwich","Hot dog","Ensalada César","Caldo de pollo","Pho","Gyoza","Kebab","Falafel","Hummus","Nachos","Churros","Flan","Smoothie"],
-  Animales: ["Perro","Gato","Lobo","Zorro","Oso","León","Tigre","Jaguar","Elefante","Jirafa","Cebra","Rinoceronte","Hipopótamo","Canguro","Koala","Delfín","Ballena","Tiburón","Pingüino","Águila","Halcón","Búho","Loro","Colibrí","Flamenco","Vaca","Toro","Cerdo","Oveja","Caballo","Camello","Llama","Conejo","Ratón","Mapache","Iguana","Serpiente","Cocodrilo","Rana","Mariposa","Abeja","Hormiga","Araña","Medusa"],
-  Peliculas: ["Titanic","Avatar","Vengadores: Endgame","Star Wars","El Rey León","Frozen","Spider-Man","Jurassic World","Harry Potter","El Señor de los Anillos","Toy Story","Los Increíbles","Fast & Furious","Duna","Top Gun","Black Panther","Iron Man","Batman","Joker","Superman","Wonder Woman","Shrek","Elsa","Simba","Mufasa","Buzz Lightyear","Woody","John Wick","Deadpool","Gollum"],
-  Deportes: ["Fútbol","Básquetbol","Béisbol","Tenis","Voleibol","Natación","Atletismo","Boxeo","Ciclismo","Gimnasia","Rugby","Golf","Surf","Skate","Snowboard","Escalada","Maratón","Taekwondo","Judo","Karate","MMA","Lucha libre","Remo","Patinaje artístico","Motocross","Fútbol americano","Handball","Waterpolo","Hockey hielo","Ajedrez","E-sports","Pádel","Squash","CrossFit"],
-  Anime: ["Dragon Ball","Naruto","One Piece","Demon Slayer","Attack on Titan","Death Note","Fullmetal Alchemist","One Punch Man","Sword Art Online","My Hero Academia","Jujutsu Kaisen","Tokyo Ghoul","Hunter x Hunter","Frieren","Chainsaw Man","Solo Leveling","Goku","Vegeta","Sasuke","Kakashi","Luffy","Zoro","Tanjiro","Nezuko","Eren","Mikasa","Levi","Light","L","Saitama","Deku","Bakugo","Todoroki","Gojo"],
-  Videojuegos: ["Minecraft","Grand Theft Auto V","Tetris","PUBG","Mario Kart","Skyrim","Super Mario Bros","Red Dead Redemption 2","The Witcher 3","Overwatch","Pokémon","Terraria","Animal Crossing","Pac-Man","Zelda","Super Smash Bros","Mario","Link","Master Chief","Kratos","Lara Croft","Sonic","Donkey Kong","Kirby","Pikachu","Geralt","Arthur Morgan","Cloud Strife","Solid Snake","Samus","Crash Bandicoot","Tracer","Trevor Philips","Niko Bellic","Joel","Ellie","Aloy"]
-};
-
-const CATEGORIES = [
-  { id: 'Variado', key: 'cat_varied', checked: true },
-  { id: 'Lugares', key: 'cat_places' },
-  { id: 'Comidas', key: 'cat_food' },
-  { id: 'Animales', key: 'cat_animals' },
-  { id: 'Peliculas', key: 'cat_movies' },
-  { id: 'Deportes', key: 'cat_sports' },
-  { id: 'Anime', key: 'cat_anime' },
-  { id: 'Videojuegos', key: 'cat_games' },
-];
-
-/* ============================================================
-   SOUND ENGINE
-   ============================================================ */
-const SoundEngine = (() => {
-  let audioCtx = null;
-  const getCtx = () => audioCtx || (audioCtx = new (window.AudioContext || window.webkitAudioContext)());
-
-  const playTone = (ctx, { type = 'sine', freq, start = 0, duration = 0.3, gain = 0.2, freqEnd = null }) => {
-    const osc = ctx.createOscillator();
-    const g = ctx.createGain();
-    const t0 = ctx.currentTime + start;
-    osc.type = type;
-    if (freqEnd !== null) {
-      osc.frequency.setValueAtTime(freq, t0);
-      osc.frequency.linearRampToValueAtTime(freqEnd, t0 + duration);
-    } else {
-      osc.frequency.value = freq;
-    }
-    g.gain.setValueAtTime(gain, t0);
-    g.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
-    osc.connect(g).connect(ctx.destination);
-    osc.start(t0);
-    osc.stop(t0 + duration);
-  };
-
-  const SOUNDS = {
-    beep:    [{ freq: 800, duration: 0.5, gain: 0.3 }],
-    bell:    [{ freq: 600, start: 0,   duration: 0.8, gain: 0.2 },
-              { freq: 800, start: 0.1, duration: 0.8, gain: 0.2 },
-              { freq: 1000, start: 0.2, duration: 0.8, gain: 0.2 }],
-    digital: Array.from({ length: 5 }, (_, i) => ({ type: 'square', freq: 1000, start: i * 0.15, duration: 0.1, gain: 0.1 })),
-    alarm:   Array.from({ length: 3 }, (_, i) => ({ type: 'sawtooth', freq: 400, freqEnd: 800, start: i * 0.6, duration: 0.6, gain: 0.15 })),
-    chime:   [523, 659, 784, 1046].map((freq, i) => ({ freq, start: i * 0.2, duration: 1, gain: 0.15 })),
-    buzzer:  [{ type: 'sawtooth', freq: 150, duration: 1.5, gain: 0.3 }],
-  };
-
-  return {
-    play(sound) {
-      if (!sound || sound === 'none' || !SOUNDS[sound]) return;
-      const ctx = getCtx();
-      if (ctx.state === 'suspended') ctx.resume();
-      SOUNDS[sound].forEach(cfg => playTone(ctx, cfg));
-    }
-  };
-})();
-
-/* ============================================================
-   APP STATE
-   ============================================================ */
-const state = {
-  currentLang: 'es',
-  selectedLang: 'es',
-  playerNames: [],
-  config: { players: 4, impostors: 1, time: 5 },
-  game: {
-    impostorIndices: [],
-    secretWord: '',
-    timeLeft: 0,
-    timerId: null,
-    paused: false,
-    alarmSound: 'none',
-    usedWords: [],
-    gameEnded: false,
-  },
-  vote: {
-    active: false,
-    voters: [],
-    currentIdx: 0,
-    votes: {},       // { voterIdx: votedIdx }
-    lastVotedFor: null,
-    showingResults: false,
-  },
-  rolesViewed: 0,
-  openHelpId: null,
-  wakeLock: null,
-};
-
-const $ = id => document.getElementById(id);
-const t = key => I18N[state.currentLang]?.[key] ?? I18N.en[key] ?? key;
-
-/* ============================================================
-   WAKE LOCK
-   ============================================================ */
-async function requestWakeLock() {
-  if (!('wakeLock' in navigator)) return;
-  try {
-    state.wakeLock = await navigator.wakeLock.request('screen');
-    state.wakeLock.addEventListener('release', () => { state.wakeLock = null; });
-  } catch (e) { /* silent */ }
-}
-function releaseWakeLock() {
-  if (state.wakeLock) state.wakeLock.release().then(() => state.wakeLock = null);
-}
-document.addEventListener('visibilitychange', async () => {
-  if (document.visibilityState === 'visible' && state.wakeLock === null && state.game.timerId) {
-    await requestWakeLock();
-  }
-});
-
-/* ============================================================
-   LANGUAGE
-   ============================================================ */
-function buildLangGrid() {
-  const grid = $('lang-grid');
-  grid.innerHTML = LANGUAGES.map(l =>
-    `<button type="button" class="lang-btn ${l.code === state.selectedLang ? 'active' : ''}" data-lang="${l.code}">
-      <span class="lang-flag">${l.flag}</span><span>${l.name}</span>
-    </button>`
-  ).join('');
-}
-
-function confirmLanguage() {
-  state.currentLang = state.selectedLang;
-  document.documentElement.lang = state.currentLang;
-  $('lang-overlay').style.display = 'none';
-  applyTranslations();
-  buildCategoryGrid();
-  showScreen('screen-setup');
-}
-
-function openLangSelector() {
-  state.selectedLang = state.currentLang;
-  buildLangGrid();
-  $('lang-overlay').style.display = 'flex';
-}
-
-function applyTranslations() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const v = t(el.dataset.i18n);
-    if (v) el.textContent = v;
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    el.placeholder = t(el.dataset.i18nPlaceholder);
-  });
-  $('tagline-main').textContent = t('tagline');
-  updateHelpLists();
-  updateSoundName();
-  document.title = `Impostor Ultimate — ${LANGUAGES.find(l => l.code === state.currentLang)?.name || ''}`;
-}
-
-function updateHelpLists() {
-  const map = [
-    ['help-setup-list', 'help_setup_items'],
-    ['help-cats-list', 'help_cats_items'],
-    ['help-names-list', 'help_names_items'],
-    ['help-reveal-list', 'help_reveal_items'],
-    ['help-game-list', 'help_game_items'],
-  ];
-  map.forEach(([id, key]) => {
-    const el = $(id);
-    const items = t(key);
-    if (el && Array.isArray(items)) el.innerHTML = items.map(i => `<li>${i}</li>`).join('');
-  });
-}
-
-/* ============================================================
-   CATEGORY GRID
-   ============================================================ */
-function buildCategoryGrid() {
-  const grid = $('cat-grid');
-  grid.innerHTML = CATEGORIES.map(cat =>
-    `<div class="cat-item">
-      <input type="checkbox" id="cat-${cat.id}" ${cat.checked ? 'checked' : ''}>
-      <label for="cat-${cat.id}">${t(cat.key)}</label>
-    </div>`
-  ).join('') +
-  `<div class="cat-item full">
-    <input type="checkbox" id="cat-Personalizado">
-    <label for="cat-Personalizado">${t('cat_custom')}</label>
-  </div>`;
-}
-
-/* ============================================================
-   STEPPER & NAV
-   ============================================================ */
-const STEPPER_CFG = {
-  'num-players':   { min: 3, max: 20 },
-  'num-impostors': { min: 1, max: 10 },
-  'game-time':     { min: 1, max: 60 },
-};
-
-function stepperChange(id, delta) {
-  const input = $(id);
-  const cfg = STEPPER_CFG[id];
-  const val = Math.max(cfg.min, Math.min(cfg.max, parseInt(input.value, 10) + delta));
-  input.value = val;
-  $(`${id}-display`).textContent = val;
-
-  if (id === 'num-players') {
-    const impInput = $('num-impostors');
-    if (parseInt(impInput.value, 10) >= val) {
-      impInput.value = val - 1;
-      $('num-impostors-display').textContent = val - 1;
-    }
-  }
-}
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  $(id).classList.add('active');
-  if (id === 'screen-history') renderHistory();
-}
-
-function goToCategories() {
-  state.config.players = parseInt($('num-players').value, 10);
-  state.config.impostors = parseInt($('num-impostors').value, 10);
-  state.config.time = parseInt($('game-time').value, 10);
-  state.game.alarmSound = $('alarm-sound').value;
-
-  if (state.config.players < 3) return alert(t('err_min_players'));
-  if (state.config.impostors >= state.config.players) return alert(t('err_impostors'));
-
-  const names = state.playerNames;
-  if (names.length < state.config.players) {
-    while (names.length < state.config.players) names.push('');
-  } else if (names.length > state.config.players) {
-    state.playerNames = names.slice(0, state.config.players);
-  }
-  showScreen('screen-categories');
-}
-
-function goToNames() {
-  const checkedCats = document.querySelectorAll('.cat-item input:checked');
-  if (checkedCats.length === 0) return alert(t('err_no_categories'));
-
-  if ($('cat-Personalizado').checked) {
-    const words = $('custom-words').value.split(',').map(w => w.trim()).filter(Boolean);
-    if (words.length === 0) return alert(t('err_no_words'));
-  }
-  renderNamesList();
-  showScreen('screen-names');
-}
-
-/* ============================================================
-   PLAYER MANAGEMENT
-   ============================================================ */
-function renderNamesList() {
-  const list = $('names-list');
-  list.innerHTML = state.playerNames.map((name, i) => {
-    const safe = escapeHtml(name);
-    return `<div class="player-input-row">
-      <span class="player-num">${i + 1}.</span>
-      <input type="text" value="${safe}" placeholder="${t('player_default')} ${i + 1}" data-idx="${i}" data-role="player-name">
-      <button type="button" class="remove-player-btn" data-remove-setup="${i}">✕</button>
-    </div>`;
-  }).join('');
-}
-
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-
-function syncSetupSteppers() {
-  state.config.players = state.playerNames.length;
-  $('num-players').value = state.config.players;
-  $('num-players-display').textContent = state.config.players;
-
-  const impInput = $('num-impostors');
-  if (parseInt(impInput.value, 10) >= state.config.players) {
-    const v = state.config.players - 1;
-    impInput.value = v;
-    $('num-impostors-display').textContent = v;
-    state.config.impostors = v;
-  }
-}
-
-function addPlayerInSetup() {
-  const input = $('new-player-name-setup');
-  const name = input.value.trim();
-  if (!name) return;
-  state.playerNames.push(name);
-  input.value = '';
-  renderNamesList();
-  syncSetupSteppers();
-}
-
-function removePlayerInSetup(idx) {
-  if (state.playerNames.length <= 3) return alert(t('err_min_players'));
-  state.playerNames.splice(idx, 1);
-  renderNamesList();
-  syncSetupSteppers();
-}
-
-/* ============================================================
-   HISTORY
-   ============================================================ */
-const HISTORY_KEY = 'impostor_history';
-
-function getHistory() {
-  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
-  catch { return []; }
-}
-
-function addGameToHistory(winner) {
-  const history = getHistory();
-  history.unshift({
-    date: new Date().toLocaleString(),
-    word: state.game.secretWord,
-    impostors: state.game.impostorIndices.map(i => state.playerNames[i]).join(', '),
-    players: state.playerNames.join(', '),
-    winner: winner || '—',
-  });
-  if (history.length > 20) history.length = 20;
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-}
-
-function renderHistory() {
-  const list = $('history-list');
-  const history = getHistory();
-
-  if (history.length === 0) {
-    list.innerHTML = `<p style="color: var(--gray); text-align: center; padding: 24px; font-family: var(--font-marker);">${t('history_empty')}</p>`;
-    return;
-  }
-
-  list.innerHTML = history.map(game => `
-    <div class="history-item">
-      <h4>${escapeHtml(game.date)}</h4>
-      <p><strong>${t('label_word')}</strong> ${escapeHtml(game.word)}</p>
-      <p><strong>${t('label_impostor_was')}</strong> <span class="imp-color">${escapeHtml(game.impostors)}</span></p>
-      <p style="font-size:0.82rem; margin-top:4px;"><strong>${t('label_players_were')}</strong> ${escapeHtml(game.players)}</p>
-    </div>
-  `).join('');
-}
-
-function clearHistory() {
-  if (!confirm(t('confirm_clear_history'))) return;
-  localStorage.removeItem(HISTORY_KEY);
-  renderHistory();
-}
-
-/* ============================================================
-   GAME LOGIC
-   ============================================================ */
-function getSecretWord() {
-  const selectedCats = [...document.querySelectorAll('.cat-item input:checked')]
-    .map(i => i.id.replace('cat-', ''))
-    .filter(id => id !== 'Personalizado');
-
-  let words = [];
-  selectedCats.forEach(cat => { if (DATABASE[cat]) words.push(...DATABASE[cat]); });
-
-  const customVal = $('custom-words')?.value.trim();
-  if (customVal) words.push(...customVal.split(',').map(w => w.trim()).filter(Boolean));
-
-  if (words.length === 0) return null;
-
-  let pool = words.filter(w => !state.game.usedWords.includes(w));
-  if (pool.length === 0) {
-    state.game.usedWords = [];
-    pool = words;
-  }
-
-  const word = pool[Math.floor(Math.random() * pool.length)];
-  state.game.usedWords.push(word);
-  return word;
-}
-
-function shuffle(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function assignRoles() {
-  state.playerNames = state.playerNames.map(n => n.trim()).filter(Boolean);
-
-  if (state.playerNames.length < 3) return alert(t('err_min_players'));
-  if (state.playerNames.length <= state.config.impostors) return alert(t('err_impostors'));
-
-  for (let i = 0; i < state.playerNames.length; i++) {
-    if (!state.playerNames[i]) state.playerNames[i] = `${t('player_default')} ${i + 1}`;
-  }
-
-  state.config.players = state.playerNames.length;
-
-  const word = getSecretWord();
-  if (!word) return alert(t('err_no_words'));
-  state.game.secretWord = word;
-
-  const indices = shuffle(Array.from({ length: state.config.players }, (_, i) => i));
-  state.game.impostorIndices = indices.slice(0, state.config.impostors).sort((a, b) => a - b);
-
-  state.rolesViewed = 0;
-  state.game.gameEnded = false;
-  renderRevealList();
-  showScreen('screen-reveal');
-}
-
-function renderRevealList() {
-  const list = $('reveal-list');
-  list.innerHTML = state.playerNames.map((name, i) =>
-    `<div class="reveal-item" data-reveal="${i}" id="reveal-${i}">
-      <div class="reveal-name">${i + 1}. ${escapeHtml(name)}</div>
-      <div class="reveal-status">${t('role_seen')} →</div>
-    </div>`
-  ).join('');
-  $('btn-begin-debate').classList.add('hidden');
-}
-
-function showRole(playerIndex) {
-  const isImpostor = state.game.impostorIndices.includes(playerIndex);
-  const modal = $('role-modal');
-  modal.innerHTML = `
-    <div class="role-card ${isImpostor ? 'impostor' : 'civil'}">
-      <div class="role-emoji">${isImpostor ? '🔪' : '🕵️'}</div>
-      <div class="role-title">${isImpostor ? t('role_impostor') : t('role_civil')}</div>
-      ${!isImpostor ? `
-        <div style="font-family: var(--font-marker); font-size:0.8rem; margin-bottom:6px;">${t('civil_word_label')}</div>
-        <div class="word-box">${escapeHtml(state.game.secretWord)}</div>
-      ` : ''}
-      <p class="role-hint">${isImpostor ? t('impostor_hint') : t('civil_hint')}</p>
-      <button type="button" class="btn btn-primary" data-close-role="${playerIndex}">${t('btn_understood')}</button>
-    </div>`;
-  modal.classList.add('visible');
-}
-
-function closeRole(playerIndex) {
-  $('role-modal').classList.remove('visible');
-  const item = $(`reveal-${playerIndex}`);
-  if (item && !item.classList.contains('done')) {
-    item.classList.add('done');
-    item.querySelector('.reveal-status').textContent = t('role_done');
-    state.rolesViewed++;
-    if (state.rolesViewed === state.playerNames.length) {
-      $('btn-begin-debate').classList.remove('hidden');
-    }
-  }
-}
-
-function startDebate() {
-  state.game.timeLeft = state.config.time * 60;
-  updateTimerDisplay();
-
-  const starterIdx = Math.floor(Math.random() * state.playerNames.length);
-  $('starter-player').textContent = state.playerNames[starterIdx];
-
-  showScreen('screen-game');
-  startTimer();
-  requestWakeLock();
-}
-
-function startTimer() {
-  clearInterval(state.game.timerId);
-  state.game.timerId = setInterval(() => {
-    if (state.game.paused) return;
-    state.game.timeLeft--;
-    updateTimerDisplay();
-    if (state.game.timeLeft <= 0) {
-      clearInterval(state.game.timerId);
-      state.game.timerId = null;
-      SoundEngine.play(state.game.alarmSound);
-      if (!state.game.gameEnded) {
-        // Auto start voting when time runs out
-        setTimeout(() => startVoting(), 400);
-      }
-    }
-  }, 1000);
-}
-
-function updateTimerDisplay() {
-  const m = Math.floor(state.game.timeLeft / 60).toString().padStart(2, '0');
-  const s = (state.game.timeLeft % 60).toString().padStart(2, '0');
-  const display = $('timer-display');
-  display.textContent = `${m}:${s}`;
-  display.classList.toggle('danger', state.game.timeLeft <= 10);
-  display.classList.toggle('warning', state.game.timeLeft > 10 && state.game.timeLeft <= 30);
-}
-
-function togglePause() {
-  state.game.paused = !state.game.paused;
-  $('btn-pause').textContent = state.game.paused ? t('btn_resume') : t('btn_pause');
-}
-
-/* ============================================================
-   VOTING
-   ============================================================ */
-function startVoting() {
-  clearInterval(state.game.timerId);
-  state.game.timerId = null;
-  state.game.paused = true;
-  releaseWakeLock();
-
-  // Shuffle the voting order so it's not obvious who's first
-  const voters = shuffle(Array.from({ length: state.playerNames.length }, (_, i) => i));
-
-  state.vote = {
-    active: true,
-    voters,
-    currentIdx: 0,
-    votes: {},
-    lastVotedFor: null,
-    showingResults: false,
-  };
-
-  showScreen('screen-vote');
-  renderVoteTurn();
-  requestWakeLock();
-}
-
-function renderVoteTurn() {
-  const voterIdx = state.vote.voters[state.vote.currentIdx];
-  const voterName = state.playerNames[voterIdx];
-
-  $('vote-turn-name').textContent = voterName;
-  $('vote-progress').textContent = `${state.vote.currentIdx + 1} / ${state.vote.voters.length}`;
-
-  // Build voting options (exclude self)
-  $('vote-options').innerHTML = state.playerNames.map((name, i) => {
-    if (i === voterIdx) return '';
-    return `<button type="button" class="vote-option" data-vote-for="${i}">
-      <span class="vote-option-num">${i + 1}.</span>
-      <span class="vote-option-name">${escapeHtml(name)}</span>
-    </button>`;
-  }).join('');
-
-  $('vote-turn-card').classList.remove('hidden');
-  $('vote-confirm-card').classList.add('hidden');
-}
-
-function castVote(votedIdx) {
-  const voterIdx = state.vote.voters[state.vote.currentIdx];
-  if (votedIdx === voterIdx) return; // can't vote for self
-
-  state.vote.votes[voterIdx] = votedIdx;
-  state.vote.lastVotedFor = votedIdx;
-
-  // Show confirmation
-  $('vote-turn-card').classList.add('hidden');
-  $('vote-confirm-card').classList.remove('hidden');
-  $('vote-confirm-who').innerHTML = `<strong>${escapeHtml(state.playerNames[votedIdx])}</strong>`;
-}
-
-function advanceVote() {
-  state.vote.currentIdx++;
-  if (state.vote.currentIdx >= state.vote.voters.length) {
-    showVoteResults();
-  } else {
-    renderVoteTurn();
-  }
-}
-
-function showVoteResults() {
-  state.vote.showingResults = true;
-  state.game.gameEnded = true;
-
-  // Tally
-  const counts = {};
-  Object.values(state.vote.votes).forEach(v => { counts[v] = (counts[v] || 0) + 1; });
-
-  let maxCount = 0;
-  let leaders = [];
-  Object.entries(counts).forEach(([idx, count]) => {
-    const i = parseInt(idx, 10);
-    if (count > maxCount) { maxCount = count; leaders = [i]; }
-    else if (count === maxCount) leaders.push(i);
-  });
-
-  const isTie = leaders.length !== 1;
-  const expelledIdx = isTie ? null : leaders[0];
-  const wasImpostor = !isTie && state.game.impostorIndices.includes(expelledIdx);
-  const civiliansWin = !isTie && wasImpostor;
-  const winnerKey = civiliansWin ? 'civilians' : 'impostors';
-
-  addGameToHistory(winnerKey);
-  releaseWakeLock();
-
-  const impostorNames = state.game.impostorIndices.map(i => state.playerNames[i]).join(', ');
-
-  // Build vote summary
-  const voteSummary = Object.entries(counts)
-    .sort((a, b) => b[1] - a[1])
-    .map(([idx, count]) => `${escapeHtml(state.playerNames[+idx])} — ${count}`)
-    .join(' · ');
-
-  const modal = $('role-modal');
-  modal.innerHTML = `
-    <div class="role-card ${civiliansWin ? 'win' : 'impostor'}">
-      <div class="role-emoji">${civiliansWin ? '🏆' : '💀'}</div>
-      <div class="role-title">${civiliansWin ? t('vote_civilians_win') : t('vote_impostors_win')}</div>
-
-      ${isTie ? `
-        <p class="role-hint" style="margin-bottom: 18px;">${t('vote_tie_msg')}</p>
-      ` : `
-        <div style="font-family: var(--font-marker); font-size:0.8rem; margin-bottom:6px; ${civiliansWin ? 'color: var(--ink);' : ''}">${t('vote_expelled')}</div>
-        <div class="word-box">${escapeHtml(state.playerNames[expelledIdx])}</div>
-        <p class="role-hint" style="font-family: var(--font-display); font-weight: 700; letter-spacing: 1.5px; font-size: 1rem; margin-bottom: 16px; ${civiliansWin ? 'color: var(--ink);' : 'color: var(--yellow);'}">
-          ${wasImpostor ? t('vote_was_impostor') : t('vote_was_civil')}
-        </p>
-      `}
-
-      <div style="font-family: var(--font-marker); font-size:0.8rem; margin: 12px 0 6px; ${civiliansWin ? 'color: var(--ink);' : ''}">${t('label_word')}</div>
-      <div class="word-box">${escapeHtml(state.game.secretWord)}</div>
-
-      <div style="font-family: var(--font-marker); font-size:0.8rem; margin: 14px 0 6px; ${civiliansWin ? 'color: var(--ink);' : ''}">${t('label_impostor_was')}</div>
-      <div class="word-box" style="background: var(--ink); color: var(--red);">${escapeHtml(impostorNames)}</div>
-
-      ${voteSummary ? `
-        <div style="font-family: var(--font-marker); font-size:0.72rem; margin-top: 14px; opacity: 0.85; line-height: 1.6; ${civiliansWin ? 'color: var(--ink);' : 'color: var(--white);'}">
-          📊 ${voteSummary}
-        </div>
-      ` : ''}
-
-      <div class="btn-row" style="margin-top: 22px;">
-        <button type="button" class="btn btn-primary" data-vote-next-round>${t('btn_next_round')}</button>
-        <button type="button" class="btn btn-ghost" data-vote-menu>${t('btn_main_menu')}</button>
-      </div>
-    </div>`;
-  modal.classList.add('visible');
-}
-
-function handleVoteNextRound() {
-  $('role-modal').classList.remove('visible');
-  state.vote.showingResults = false;
-  softReset(true);
-}
-
-function handleVoteBackToMenu() {
-  $('role-modal').classList.remove('visible');
-  state.vote.showingResults = false;
-  fullReset(true);
-}
-
-/* ============================================================
-   REVEAL & END (emergency skip)
-   ============================================================ */
-function revealAndEndGame() {
-  if (!confirm(t('confirm_reveal'))) return;
-
-  clearInterval(state.game.timerId);
-  state.game.timerId = null;
-  state.game.paused = true;
-  state.game.gameEnded = true;
-  addGameToHistory('impostors');
-  releaseWakeLock();
-
-  const impostorNames = state.game.impostorIndices.map(i => state.playerNames[i]).join(', ');
-  const modal = $('role-modal');
-  modal.innerHTML = `
-    <div class="role-card impostor">
-      <div class="role-emoji">⚠️</div>
-      <div class="role-title">${t('end_game_title')}</div>
-      <p class="role-hint" style="margin-bottom: 16px;">${t('end_game_civilians_lose')}</p>
-      <div style="font-family: var(--font-marker); font-size:0.8rem; margin-bottom:6px;">${t('label_word')}</div>
-      <div class="word-box">${escapeHtml(state.game.secretWord)}</div>
-      <div style="font-family: var(--font-marker); font-size:0.8rem; margin: 14px 0 6px;">${t('label_impostor_was')}</div>
-      <div class="word-box" style="background: var(--ink); color: var(--red);">${escapeHtml(impostorNames)}</div>
-      <button type="button" class="btn btn-primary" data-end-game style="margin-top: 16px;">${t('btn_close')}</button>
-    </div>`;
-  modal.classList.add('visible');
-}
-
-function closeEndGameModal() {
-  $('role-modal').classList.remove('visible');
-  fullReset(true);
-}
-
-function softReset(skipConfirm = false) {
-  if (!skipConfirm && !confirm(t('confirm_new'))) return;
-  clearInterval(state.game.timerId);
-  state.game.timerId = null;
-  state.game.paused = false;
-  state.game.gameEnded = false;
-  releaseWakeLock();
-  assignRoles();
-}
-
-function fullReset(skipConfirm = false) {
-  if (!skipConfirm && !confirm(t('confirm_reset'))) return;
-  clearInterval(state.game.timerId);
-  state.game.timerId = null;
-  state.playerNames = [];
-  state.game.usedWords = [];
-  state.game.gameEnded = false;
-  releaseWakeLock();
-  showScreen('screen-setup');
-}
-
-/* ============================================================
-   MANAGE PLAYERS MID-GAME
-   ============================================================ */
-function openManagePlayers() {
-  state.game.paused = true;
-  $('btn-pause').textContent = t('btn_resume');
-  $('role-modal').classList.remove('visible');
-  renderManageList();
-  $('manage-modal').classList.add('visible');
-}
-
-function closeManagePlayers() {
-  $('manage-modal').classList.remove('visible');
-}
-
-function renderManageList() {
-  $('manage-list').innerHTML = state.playerNames.map((name, i) =>
-    `<div class="manage-item">
-      <span>${i + 1}. ${escapeHtml(name)}</span>
-      <button type="button" class="remove-player-btn" data-remove-mid="${i}">✕</button>
-    </div>`
-  ).join('');
-}
-
-function removePlayerMidGame(idx) {
-  if (state.playerNames.length <= 3) return alert(t('err_min_players'));
-  if (!confirm(t('confirm_remove'))) return;
-
-  const wasImpostor = state.game.impostorIndices.includes(idx);
-  state.playerNames.splice(idx, 1);
-
-  state.game.impostorIndices = state.game.impostorIndices
-    .filter(i => i !== idx)
-    .map(i => i > idx ? i - 1 : i);
-
-  if (wasImpostor && state.game.impostorIndices.length < state.config.impostors) {
-    const available = state.playerNames.map((_, i) => i).filter(i => !state.game.impostorIndices.includes(i));
-    if (available.length > 0) {
-      const newImp = available[Math.floor(Math.random() * available.length)];
-      state.game.impostorIndices.push(newImp);
-      state.game.impostorIndices.sort((a, b) => a - b);
-      alert(`${state.playerNames[newImp]} ${t('new_impostor')}`);
-    }
-  }
-
-  state.config.players = state.playerNames.length;
-  renderManageList();
-}
-
-function addPlayerMidGame() {
-  const input = $('new-player-name-mid');
-  const name = input.value.trim();
-  if (!name) return;
-
-  state.playerNames.push(name);
-  state.config.players = state.playerNames.length;
-  input.value = '';
-  renderManageList();
-
-  const playerIdx = state.playerNames.length - 1;
-  $('manage-modal').classList.remove('visible');
-
-  const modal = $('role-modal');
-  modal.innerHTML = `
-    <div class="role-card civil">
-      <div class="role-emoji">🕵️</div>
-      <div class="role-title">${t('role_civil')}</div>
-      <div style="font-family: var(--font-marker); font-size:0.8rem; margin-bottom:6px;">${t('civil_word_label')}</div>
-      <div class="word-box">${escapeHtml(state.game.secretWord)}</div>
-      <p class="role-hint">${t('civil_hint')}</p>
-      <button type="button" class="btn btn-primary" data-close-role="${playerIdx}">${t('btn_understood')}</button>
-    </div>`;
-  modal.classList.add('visible');
-}
-
-/* ============================================================
-   SOUND UI
-   ============================================================ */
-function updateSoundName() {
-  const select = $('alarm-sound');
-  $('selected-sound-name').textContent = select.options[select.selectedIndex].text;
-}
-
-function testAlarmSound() {
-  SoundEngine.play($('alarm-sound').value);
-}
-
-/* ============================================================
-   HELP
-   ============================================================ */
-function toggleHelp(id) {
-  if (state.openHelpId && state.openHelpId !== id) {
-    $(state.openHelpId).classList.remove('open');
-  }
-  const panel = $(id);
-  panel.classList.toggle('open');
-  state.openHelpId = panel.classList.contains('open') ? id : null;
-}
-
-/* ============================================================
-   EVENTS
-   ============================================================ */
-function bindEvents() {
-  $('lang-grid').addEventListener('click', e => {
-    const btn = e.target.closest('[data-lang]');
-    if (!btn) return;
-    state.selectedLang = btn.dataset.lang;
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b === btn));
-  });
-  $('lang-confirm-btn').addEventListener('click', confirmLanguage);
-  $('btn-lang-toggle').addEventListener('click', openLangSelector);
-
-  document.querySelectorAll('[data-stepper]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      stepperChange(btn.dataset.stepper, parseInt(btn.dataset.delta, 10));
+    <div class="app-container">
+        <h1>⚡ Tipster Auto-Post</h1>
+        <p class="subtitle">Rellena el tíquet, genera el texto y envíalo a tu grupo de Telegram.</p>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- CONFIGURACIÓN DE TELEGRAM (OCULTA POR DEFECTO) -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <details class="config-section">
+            <summary>⚙️ Configuración de Telegram (clic para abrir)</summary>
+            <label for="botToken">Bot Token</label>
+            <input type="password" id="botToken" placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz" />
+            <p class="hint">Obtenlo de @BotFather en Telegram.</p>
+
+            <label for="chatId">Chat ID del grupo</label>
+            <input type="text" id="chatId" placeholder="-1001234567890" />
+            <p class="hint">
+                Envía un mensaje al grupo, luego visita
+                <code style="color:#38bdf8">api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code>
+                y busca <code style="color:#38bdf8">"chat":{"id":-100...}</code>.
+            </p>
+
+            <label for="proxyUrl">Proxy CORS (opcional pero recomendado)</label>
+            <input type="text" id="proxyUrl" placeholder="https://tu-worker.workers.dev" />
+            <p class="hint">
+                Si ves errores de CORS en el navegador, necesitas un proxy.
+                Despliega gratis un <strong>Cloudflare Worker</strong> con este código:
+            </p>
+            <pre style="background:#020617;padding:12px;border-radius:8px;font-size:0.75rem;overflow-x:auto;color:#94a3b8;margin-bottom:16px;">export default {
+  async fetch(request) {
+    const url = new URL(request.url);
+    const target = url.searchParams.get('url');
+    if (!target) return new Response('Falta ?url=', { status: 400 });
+    const resp = await fetch(decodeURIComponent(target), {
+      method: request.method,
+      headers: { 'Content-Type': 'application/json' },
+      body: request.method !== 'GET' ? request.body : undefined,
     });
-  });
+    const headers = new Headers(resp.headers);
+    headers.set('Access-Control-Allow-Origin', '*');
+    headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    if (request.method === 'OPTIONS') return new Response(null, { headers });
+    return new Response(resp.body, { status: resp.status, headers });
+  }
+};</pre>
+            <p class="hint">Luego pega la URL de tu Worker aquí (ej: <code>https://mi-proxy.workers.dev</code>).</p>
+        </details>
 
-  $('alarm-sound').addEventListener('change', updateSoundName);
-  $('btn-test-sound').addEventListener('click', testAlarmSound);
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- FORMULARIO DEL TÍQUET                          -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <label for="sport">Deporte / Liga</label>
+        <input type="text" id="sport" placeholder="Ej: Fútbol — La Liga" />
 
-  $('btn-continue').addEventListener('click', goToCategories);
-  $('btn-history-open').addEventListener('click', () => showScreen('screen-history'));
-  $('btn-history-back').addEventListener('click', () => showScreen('screen-setup'));
-  $('btn-clear-history').addEventListener('click', clearHistory);
-  $('btn-to-names').addEventListener('click', goToNames);
-  $('btn-cats-back').addEventListener('click', fullReset);
-  $('btn-names-back').addEventListener('click', () => showScreen('screen-categories'));
-  $('btn-reveal-back').addEventListener('click', () => showScreen('screen-names'));
-  $('btn-assign-roles').addEventListener('click', assignRoles);
-  $('btn-begin-debate').addEventListener('click', startDebate);
+        <div class="row">
+            <div>
+                <label for="event">Evento principal</label>
+                <input type="text" id="event" placeholder="Ej: Real Madrid vs Barcelona" />
+            </div>
+            <div>
+                <label for="market">Mercado</label>
+                <input type="text" id="market" placeholder="Ej: Ambos equipos marcan" />
+            </div>
+        </div>
 
-  $('btn-pause').addEventListener('click', togglePause);
-  $('btn-vote-now').addEventListener('click', () => {
-    if (state.game.gameEnded) return;
-    startVoting();
-  });
-  $('btn-reveal-end').addEventListener('click', revealAndEndGame);
-  $('btn-manage').addEventListener('click', openManagePlayers);
-  $('btn-new-game').addEventListener('click', () => softReset(false));
-  $('btn-main-menu').addEventListener('click', () => fullReset(false));
+        <div class="row">
+            <div>
+                <label for="pick">Selección</label>
+                <input type="text" id="pick" placeholder="Ej: Sí" />
+            </div>
+            <div>
+                <label for="odds">Cuota</label>
+                <input type="number" id="odds" placeholder="1.85" step="0.01" min="1" />
+            </div>
+        </div>
 
-  $('cat-grid').addEventListener('change', e => {
-    if (e.target.id === 'cat-Personalizado') {
-      $('custom-area').classList.toggle('hidden', !e.target.checked);
-    }
-  });
+        <div class="row">
+            <div>
+                <label for="stake">Stake (unidades)</label>
+                <input type="number" id="stake" placeholder="2" step="0.1" min="0.1" />
+            </div>
+            <div>
+                <label for="confidence">Confianza</label>
+                <select id="confidence">
+                    <option value="alta">🔥 Alta</option>
+                    <option value="media" selected>💪 Media</option>
+                    <option value="baja">🤔 Baja</option>
+                </select>
+            </div>
+        </div>
 
-  $('names-list').addEventListener('input', e => {
-    const input = e.target.closest('[data-role="player-name"]');
-    if (input) state.playerNames[+input.dataset.idx] = input.value;
-  });
-  $('names-list').addEventListener('click', e => {
-    const btn = e.target.closest('[data-remove-setup]');
-    if (btn) removePlayerInSetup(+btn.dataset.removeSetup);
-  });
-  $('btn-add-setup').addEventListener('click', addPlayerInSetup);
-  $('new-player-name-setup').addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); addPlayerInSetup(); }
-  });
+        <label for="extra">Notas adicionales (opcional)</label>
+        <textarea id="extra" placeholder="Ej: El equipo local lleva 5 partidos sin perder en casa."></textarea>
 
-  $('reveal-list').addEventListener('click', e => {
-    const item = e.target.closest('[data-reveal]');
-    if (item) showRole(+item.dataset.reveal);
-  });
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- BOTONES                                       -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <div class="btn-group">
+            <button class="btn-preview" onclick="generarPreview()">👁️ Previsualizar</button>
+            <button class="btn-send" id="sendBtn" onclick="enviarTelegram()">🚀 Enviar a Telegram</button>
+        </div>
 
-  // Voting options
-  $('vote-options').addEventListener('click', e => {
-    const opt = e.target.closest('[data-vote-for]');
-    if (opt) castVote(+opt.dataset.voteFor);
-  });
-  $('btn-vote-next').addEventListener('click', advanceVote);
+        <!-- PREVISUALIZACIÓN -->
+        <div class="preview-box" id="previewBox"></div>
 
-  // Modal delegation
-  $('role-modal').addEventListener('click', e => {
-    const closeRoleBtn = e.target.closest('[data-close-role]');
-    if (closeRoleBtn) return closeRole(closeRoleBtn.dataset.closeRole);
-    const endBtn = e.target.closest('[data-end-game]');
-    if (endBtn) return closeEndGameModal();
-    const nextRoundBtn = e.target.closest('[data-vote-next-round]');
-    if (nextRoundBtn) return handleVoteNextRound();
-    const menuBtn = e.target.closest('[data-vote-menu]');
-    if (menuBtn) return handleVoteBackToMenu();
-    // Prevent accidental close during vote results
-    if (e.target === $('role-modal') && !state.vote.showingResults) {
-      $('role-modal').classList.remove('visible');
-    }
-  });
+        <!-- ESTADO -->
+        <div class="status" id="statusMsg"></div>
+    </div>
 
-  $('btn-add-mid').addEventListener('click', addPlayerMidGame);
-  $('new-player-name-mid').addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); addPlayerMidGame(); }
-  });
-  $('btn-close-manage').addEventListener('click', closeManagePlayers);
-  $('manage-list').addEventListener('click', e => {
-    const btn = e.target.closest('[data-remove-mid]');
-    if (btn) removePlayerMidGame(+btn.dataset.removeMid);
-  });
+    <script>
+        // ═══════════════════════════════════════════════════════════
+        // GENERADOR DE TEXTO TIPSTER
+        // ═══════════════════════════════════════════════════════════
+        function generarTexto() {
+            const sport      = document.getElementById('sport').value.trim();
+            const event      = document.getElementById('event').value.trim();
+            const market     = document.getElementById('market').value.trim();
+            const pick       = document.getElementById('pick').value.trim();
+            const odds       = document.getElementById('odds').value.trim();
+            const stake      = document.getElementById('stake').value.trim();
+            const confidence = document.getElementById('confidence').value;
+            const extra      = document.getElementById('extra').value.trim();
 
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('[data-help]');
-    if (btn) toggleHelp(btn.dataset.help);
-  });
-}
+            if (!event || !market || !pick || !odds) {
+                return null; // Validación mínima
+            }
 
-/* ============================================================
-   INIT
-   ============================================================ */
-window.addEventListener('DOMContentLoaded', () => {
-  buildLangGrid();
-  bindEvents();
-  updateSoundName();
-});
-</script>
+            // Ganancia potencial
+            const ganancia = (parseFloat(stake) * parseFloat(odds)).toFixed(2);
 
+            // Frases según confianza
+            const frasesConfianza = {
+                alta: [
+                    '🔥 <b>¡JUGADA DE ALTA CONFIANZA!</b> 🔥',
+                    '💎 <b>PICK PREMIUM — ALTA CONVICCIÓN</b> 💎',
+                    '🚨 <b>ALERTA DE VALOR — CONFIANZA MÁXIMA</b> 🚨',
+                ],
+                media: [
+                    '💪 <b>Jugada sólida del día</b>',
+                    '✅ <b>Pick con buen valor</b>',
+                    '📊 <b>Oportunidad interesante</b>',
+                ],
+                baja: [
+                    '🤔 <b>Jugada especulativa</b>',
+                    '⚠️ <b>Pick de riesgo controlado</b>',
+                    '🎲 <b>Apuesta de valor marginal</b>',
+                ],
+            };
+
+            const frases = frasesConfianza[confidence];
+            const fraseAleatoria = frases[Math.floor(Math.random() * frases.length)];
+
+            // Emojis según deporte
+            let sportEmoji = '🏆';
+            const s = (sport + ' ' + event).toLowerCase();
+            if (s.includes('fútbol') || s.includes('futbol') || s.includes('soccer')) sportEmoji = '⚽';
+            else if (s.includes('baloncesto') || s.includes('nba') || s.includes('basket')) sportEmoji = '🏀';
+            else if (s.includes('tenis') || s.includes('atp') || s.includes('wta')) sportEmoji = '🎾';
+            else if (s.includes('béisbol') || s.includes('mlb') || s.includes('beisbol')) sportEmoji = '⚾';
+            else if (s.includes('f1') || s.includes('fórmula') || s.includes('formula')) sportEmoji = '🏎️';
+            else if (s.includes('ufc') || s.includes('mma')) sportEmoji = '🥊';
+
+            // Construir mensaje
+            let msg = '';
+
+            msg += `${fraseAleatoria}\n\n`;
+            msg += `${sportEmoji} <b>${event}</b>\n`;
+            if (sport) msg += `🏟️ ${sport}\n`;
+            msg += `\n`;
+            msg += `📋 <b>Mercado:</b> ${market}\n`;
+            msg += `🎯 <b>Selección:</b> <b>${pick}</b>\n`;
+            msg += `💰 <b>Cuota:</b> ${odds}\n`;
+            msg += `📈 <b>Stake:</b> ${stake || '1'} unidad${stake !== '1' ? 'es' : ''}\n`;
+            msg += `💵 <b>Ganancia potencial:</b> +${ganancia} uds.\n`;
+
+            if (extra) {
+                msg += `\n📝 <b>Análisis:</b>\n${extra}\n`;
+            }
+
+            msg += `\n━━━━━━━━━━━━━━━━━━\n`;
+            msg += `🍀 <i>¡Mucha suerte, familia!</i> 🍀\n`;
+            msg += `#Apuestas #Tipster #PickDelDía`;
+
+            return msg;
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // PREVISUALIZACIÓN
+        // ═══════════════════════════════════════════════════════════
+        function generarPreview() {
+            const texto = generarTexto();
+            const box = document.getElementById('previewBox');
+
+            if (!texto) {
+                box.classList.add('visible');
+                box.textContent = '⚠️ Rellena al menos: evento, mercado, selección y cuota.';
+                return;
+            }
+
+            // Mostrar como texto plano (quitando etiquetas HTML para previsualizar)
+            box.classList.add('visible');
+            box.textContent = texto.replace(/<\/?[^>]+(>|$)/g, '');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // ENVÍO A TELEGRAM
+        // ═══════════════════════════════════════════════════════════
+        async function enviarTelegram() {
+            const btn = document.getElementById('sendBtn');
+            const status = document.getElementById('statusMsg');
+            const token = document.getElementById('botToken').value.trim();
+            const chatId = document.getElementById('chatId').value.trim();
+            const proxy = document.getElementById('proxyUrl').value.trim();
+
+            // Validar configuración
+            if (!token || !chatId) {
+                mostrarEstado('error', '❌ Configura el Bot Token y el Chat ID en la sección de configuración.');
+                return;
+            }
+
+            const texto = generarTexto();
+            if (!texto) {
+                mostrarEstado('error', '❌ Rellena al menos: evento, mercado, selección y cuota.');
+                return;
+            }
+
+            // Deshabilitar botón
+            btn.disabled = true;
+            btn.textContent = '⏳ Enviando…';
+            status.className = 'status';
+            status.style.display = 'none';
+
+            try {
+                // Construir URL de la API de Telegram
+                const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+
+                // Si hay proxy, envolvemos la URL
+                let fetchUrl = telegramUrl;
+                if (proxy) {
+                    fetchUrl = `${proxy}?url=${encodeURIComponent(telegramUrl)}`;
+                }
+
+                const response = await fetch(fetchUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: texto,
+                        parse_mode: 'HTML',
+                        disable_web_page_preview: true,
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    mostrarEstado('success', '✅ ¡Mensaje enviado al grupo de Telegram! 🎉');
+                } else {
+                    mostrarEstado('error', `❌ Error de Telegram: ${data.description || 'Desconocido'}`);
+                }
+            } catch (err) {
+                // Error típico de CORS
+                if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+                    mostrarEstado('error', '❌ Error de red/CORS. Configura un proxy (ver sección de configuración).');
+                } else {
+                    mostrarEstado('error', `❌ Error: ${err.message}`);
+                }
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Enviar a Telegram';
+            }
+        }
+
+        function mostrarEstado(tipo, mensaje) {
+            const status = document.getElementById('statusMsg');
+            status.className = `status ${tipo}`;
+            status.textContent = mensaje;
+            status.style.display = 'block';
+        }
+
+        // Generar preview al cargar si hay datos guardados (opcional)
+        window.addEventListener('DOMContentLoaded', () => {
+            // Nada por ahora
+        });
+    </script>
 </body>
 </html>
