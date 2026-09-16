@@ -85,10 +85,6 @@
         }
         .pick-card-header .del-btn:hover { background: #7f1d1d; }
 
-        .pick-card-row {
-            display: grid; grid-template-columns: 2fr 1fr;
-            gap: 10px; margin-bottom: 10px;
-        }
         .pick-card .field-label {
             font-size: 0.65rem; color: #64748b;
             text-transform: uppercase; letter-spacing: 0.5px;
@@ -108,6 +104,11 @@
             font-size: 0.68rem; color: #64748b;
             margin-top: 4px; display: block;
         }
+        .pick-card .odds-row {
+            display: flex; align-items: flex-end; gap: 10px;
+            margin-top: 10px;
+        }
+        .pick-card .odds-row .odds-field { flex: 0 0 130px; }
 
         .add-pick-btn {
             width: 100%; background: #1e293b;
@@ -133,6 +134,34 @@
             color: #38bdf8; margin-top: 2px;
         }
         .totals-box .item .val.green { color: #4ade80; }
+
+        /* SELECTOR TIPO DE APUESTA */
+        .bet-type-selector {
+            display: flex; gap: 8px; margin-top: 4px;
+        }
+        .bet-type-btn {
+            flex: 1;
+            padding: 11px 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .bet-type-btn:hover {
+            border-color: #475569;
+            color: #cbd5e1;
+        }
+        .bet-type-btn.active {
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: #0f172a;
+            border-color: transparent;
+            box-shadow: 0 4px 14px -4px rgba(56,189,248,0.5);
+        }
 
         /* BOTONES */
         .btn-group { display: flex; gap: 12px; margin-top: 8px; }
@@ -183,8 +212,9 @@
         @media (max-width: 600px) {
             .app-container { padding: 18px; }
             .row { grid-template-columns: 1fr; }
-            .pick-card-row { grid-template-columns: 1fr; }
             .btn-group { flex-direction: column; }
+            .pick-card .odds-row { flex-direction: column; align-items: stretch; }
+            .pick-card .odds-row .odds-field { flex: 1; }
         }
     </style>
 </head>
@@ -244,21 +274,22 @@
                     <input type="text" id="stake" value="1" />
                 </div>
             </div>
-            <div class="row">
-                <div>
-                    <label for="confidence">Confianza</label>
-                    <select id="confidence">
-                        <option value="alta">🔥 Alta</option>
-                        <option value="media" selected>💪 Media</option>
-                        <option value="baja">🤔 Baja</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="tipo">Tipo</label>
-                    <input type="text" id="tipo" readonly style="opacity:0.6;" />
-                </div>
+
+            <label>Tipo de apuesta</label>
+            <div class="bet-type-selector">
+                <button type="button" class="bet-type-btn" data-type="parlay" onclick="setBetType('parlay')">Parlay</button>
+                <button type="button" class="bet-type-btn" data-type="directa" onclick="setBetType('directa')">Derecha</button>
+                <button type="button" class="bet-type-btn active" data-type="auto" onclick="setBetType('auto')">Escoger</button>
             </div>
-            <label for="extra">Notas / análisis (opcional)</label>
+
+            <label for="confidence" style="margin-top:14px;">Confianza</label>
+            <select id="confidence">
+                <option value="alta">🔥 Alta</option>
+                <option value="media" selected>💪 Media</option>
+                <option value="baja">🤔 Baja</option>
+            </select>
+
+            <label for="extra" style="margin-top:14px;">Notas / análisis (opcional)</label>
             <textarea id="extra" placeholder="Ej: Estos jugadores llegan en gran forma..."></textarea>
         </div>
 
@@ -276,6 +307,7 @@
         // ESTADO
         // ═══════════════════════════════════════════════════════════════
         let picks = [];
+        let betType = 'auto'; // 'parlay' | 'directa' | 'auto'
 
         // ═══════════════════════════════════════════════════════════════
         // UTILIDADES
@@ -285,12 +317,23 @@
         const attr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
         // ═══════════════════════════════════════════════════════════════
+        // SELECTOR DE TIPO DE APUESTA
+        // ═══════════════════════════════════════════════════════════════
+        function setBetType(type) {
+            betType = type;
+            document.querySelectorAll('.bet-type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+            actualizarTotales();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
         // RENDER PICKS (tarjetas)
         // ═══════════════════════════════════════════════════════════════
         function renderPicks() {
             const cont = document.getElementById('picksList');
             cont.innerHTML = '';
-            if (picks.length === 0) picks.push({ event: '', market: '', selection: '', odds: '' });
+            if (picks.length === 0) picks.push({ event: '', selection: '', odds: '' });
 
             picks.forEach((p, i) => {
                 const subCount = (p.selection.match(/•/g) || []).length;
@@ -304,22 +347,18 @@
                         ${subCount > 1 ? `<span class="sub-pick-count">${subCount} legs</span>` : ''}
                         <button class="del-btn" onclick="removePick(${i})">×</button>
                     </div>
-                    <div class="pick-card-row">
-                        <div>
-                            <span class="field-label">Mercado</span>
-                            <input type="text" placeholder="Constructor / 1X2 / BTTS…"
-                                   value="${attr(p.market)}" oninput="updatePick(${i},'market',this.value)" />
-                        </div>
-                        <div>
+                    <span class="field-label">Selección</span>
+                    <textarea placeholder="Ejemplo constructor:&#10;• Jenson Brooksby ganar al menos 1 set&#10;• Más de 19.5 juegos&#10;&#10;Ejemplo simple:&#10;Ambos equipos marcan"
+                              oninput="updatePick(${i},'selection',this.value)">${esc(p.selection)}</textarea>
+                    <span class="field-hint">💡 Usa <b>•</b> al inicio de cada línea para varios legs (Constructor/Bet Builder)</span>
+
+                    <div class="odds-row">
+                        <div class="odds-field">
                             <span class="field-label">Cuota</span>
                             <input type="number" step="0.01" min="1" placeholder="1.85"
                                    value="${attr(p.odds)}" oninput="updatePick(${i},'odds',this.value)" />
                         </div>
                     </div>
-                    <span class="field-label">Selección</span>
-                    <textarea placeholder="Ejemplo constructor:&#10;• Jenson Brooksby ganar al menos 1 set&#10;• Más de 19.5 juegos&#10;&#10;Ejemplo simple:&#10;Ambos equipos marcan"
-                              oninput="updatePick(${i},'selection',this.value)">${esc(p.selection)}</textarea>
-                    <span class="field-hint">💡 Usa <b>•</b> al inicio de cada línea para varios legs (Constructor/Bet Builder)</span>
                 `;
                 cont.appendChild(card);
             });
@@ -351,22 +390,20 @@
 
         function removePick(i) {
             picks.splice(i, 1);
-            if (picks.length === 0) picks.push({ event:'', market:'', selection:'', odds:'' });
+            if (picks.length === 0) picks.push({ event:'', selection:'', odds:'' });
             renderPicks();
         }
 
         function addPick() {
             const last = picks[picks.length-1];
             if (last && !last.event && !last.selection && !last.odds) {
-                // ya hay una vacía → enfocar
                 const cards = document.querySelectorAll('.pick-card');
                 const inputs = cards[cards.length-1].querySelectorAll('input');
                 if (inputs[0]) inputs[0].focus();
                 return;
             }
-            picks.push({ event:'', market:'', selection:'', odds:'' });
+            picks.push({ event:'', selection:'', odds:'' });
             renderPicks();
-            // Enfocar el nuevo
             const cards = document.querySelectorAll('.pick-card');
             const inputs = cards[cards.length-1].querySelectorAll('input');
             if (inputs[0]) inputs[0].focus();
@@ -382,7 +419,6 @@
             document.getElementById('totOdds').textContent = totalOdds.toFixed(2);
             document.getElementById('totWin').textContent = '+' + ganancia.toFixed(2);
             document.getElementById('pickCount').textContent = `${validos.length} pick${validos.length!==1?'s':''}`;
-            document.getElementById('tipo').value = validos.length <= 1 ? 'Simple' : `Parlay (${validos.length})`;
         }
         document.getElementById('stake').addEventListener('input', actualizarTotales);
 
@@ -398,8 +434,15 @@
             const confidence = document.getElementById('confidence').value;
             const extra = document.getElementById('extra').value.trim();
             const totalOdds = validos.reduce((acc, p) => acc * num(p.odds), 1);
-            const ganancia = totalOdds * num(stake);
-            const esParlay = validos.length > 1;
+
+            // Determinar tipo efectivo
+            let tipoEfectivo = betType;
+            if (betType === 'auto') {
+                tipoEfectivo = validos.length > 1 ? 'parlay' : 'directa';
+            }
+            // Si es "directa" pero hay varios picks → solo usamos el primero
+            const picksUsados = tipoEfectivo === 'directa' ? validos.slice(0, 1) : validos;
+            const esParlay = tipoEfectivo === 'parlay' && picksUsados.length > 1;
 
             const frases = {
                 alta: ['🔥 <b>¡JUGADA DE ALTA CONFIANZA!</b> 🔥',
@@ -414,7 +457,7 @@
             };
             const frase = frases[confidence][Math.floor(Math.random()*frases[confidence].length)];
 
-            const s = (sport + ' ' + validos.map(p=>p.event).join(' ')).toLowerCase();
+            const s = (sport + ' ' + picksUsados.map(p=>p.event).join(' ')).toLowerCase();
             let sportEmoji = '🏆';
             if (/fútbol|futbol|soccer|gol|goleador/.test(s)) sportEmoji = '⚽';
             else if (/tenis|atp|wta|juego|set/.test(s)) sportEmoji = '🎾';
@@ -429,11 +472,11 @@
             msg += `${frase}\n\n`;
 
             if (esParlay) {
-                msg += `🎰 <b>PARLAY DE ${validos.length} EVENTOS</b>\n`;
+                msg += `🎰 <b>PARLAY DE ${picksUsados.length} EVENTOS</b>\n`;
                 if (sport) msg += `🏟️ ${esc(sport)}\n`;
                 msg += `\n`;
 
-                validos.forEach((p, i) => {
+                picksUsados.forEach((p, i) => {
                     const bullet = nums[i] || '•';
                     msg += `${bullet} <b>${esc(p.event)}</b>\n`;
 
@@ -442,14 +485,10 @@
                         .filter(l => l);
 
                     if (subLines.length > 1) {
-                        // Constructor / Bet Builder con varios legs
-                        msg += `   🎯 <i>${esc(p.market || 'Constructor')} @ ${esc(p.odds)}</i>\n`;
-                        subLines.forEach(sl => {
-                            msg += `   ✓ ${esc(sl)}\n`;
-                        });
+                        msg += `   🎯 <i>Constructor @ ${esc(p.odds)}</i>\n`;
+                        subLines.forEach(sl => { msg += `   ✓ ${esc(sl)}\n`; });
                     } else {
                         const sel = subLines[0] || p.selection;
-                        if (p.market) msg += `   📋 ${esc(p.market)}\n`;
                         msg += `   🎯 <b>${esc(sel)}</b>  ·  💰 ${esc(p.odds)}\n`;
                     }
                     msg += `\n`;
@@ -457,7 +496,7 @@
 
                 msg += `💥 <b>Cuota total:</b> ${totalOdds.toFixed(2)}\n`;
             } else {
-                const p = validos[0];
+                const p = picksUsados[0];
                 msg += `${sportEmoji} <b>${esc(p.event)}</b>\n`;
                 if (sport) msg += `🏟️ ${esc(sport)}\n`;
                 msg += `\n`;
@@ -467,17 +506,16 @@
                     .filter(l => l);
 
                 if (subLines.length > 1) {
-                    msg += `🎯 <b>${esc(p.market || 'Constructor')} @ ${esc(p.odds)}:</b>\n`;
+                    msg += `🎯 <b>Constructor @ ${esc(p.odds)}:</b>\n`;
                     subLines.forEach(sl => { msg += `   ✓ ${esc(sl)}\n`; });
                 } else {
-                    if (p.market) msg += `📋 <b>Mercado:</b> ${esc(p.market)}\n`;
-                    msg += `🎯 <b>Selección:</b> <b>${esc(subLines[0] || p.selection)}</b>\n`;
+                    const sel = subLines[0] || p.selection;
+                    msg += `🎯 <b>Selección:</b> <b>${esc(sel)}</b>\n`;
                     msg += `💰 <b>Cuota:</b> ${esc(p.odds)}\n`;
                 }
             }
 
             msg += `📈 <b>Stake:</b> ${esc(stake)} unidad${num(stake)!==1?'es':''}\n`;
-            msg += `💵 <b>Ganancia potencial:</b> +${ganancia.toFixed(2)} uds\n`;
 
             if (extra) msg += `\n📝 <b>Análisis:</b>\n${esc(extra)}\n`;
 
