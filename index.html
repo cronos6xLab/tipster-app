@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tipster Auto-Post PRO 📸</title>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <title>Tipster Auto-Post 🚀</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -16,7 +15,7 @@
         }
         .app-container {
             background: #1e293b; border-radius: 24px; padding: 28px;
-            width: 100%; max-width: 860px; margin: 0 auto;
+            width: 100%; max-width: 820px; margin: 0 auto;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
             border: 1px solid #334155;
         }
@@ -43,46 +42,6 @@
         input:focus, textarea:focus, select:focus { border-color: #38bdf8; }
         textarea { resize: vertical; min-height: 60px; }
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        /* ZONA SUBIDA */
-        .upload-zone {
-            border: 2px dashed #334155; border-radius: 16px;
-            padding: 22px; text-align: center; cursor: pointer;
-            transition: all 0.2s; margin-bottom: 14px;
-            background: #0f172a;
-        }
-        .upload-zone:hover, .upload-zone.drag {
-            border-color: #38bdf8; background: #111f36;
-        }
-        .upload-zone .icon { font-size: 2.2rem; margin-bottom: 6px; }
-        .upload-zone p { color: #94a3b8; font-size: 0.85rem; }
-        .upload-zone .hint-small { font-size: 0.72rem; color: #64748b; margin-top: 4px; }
-        .upload-zone input[type=file] { display: none; }
-        .img-preview {
-            max-width: 100%; max-height: 240px; border-radius: 12px;
-            margin-top: 12px; border: 1px solid #334155;
-        }
-
-        /* OCR PROGRESO */
-        .ocr-progress {
-            display: none; margin-top: 12px;
-            background: #0f172a; border-radius: 10px;
-            padding: 12px 16px; border: 1px solid #334155;
-        }
-        .ocr-progress.visible { display: block; }
-        .ocr-progress .bar-bg {
-            height: 6px; background: #1e293b; border-radius: 4px;
-            overflow: hidden; margin-top: 8px;
-        }
-        .ocr-progress .bar-fill {
-            height: 100%; width: 0%;
-            background: linear-gradient(90deg, #38bdf8, #a78bfa);
-            transition: width 0.3s;
-        }
-        .ocr-progress .status-txt {
-            font-size: 0.78rem; color: #94a3b8;
-            display: flex; justify-content: space-between;
-        }
 
         /* SECCIONES */
         .section {
@@ -136,20 +95,24 @@
             margin-bottom: 4px; display: block;
         }
         .pick-card textarea {
-            min-height: 60px; font-size: 0.88rem;
+            min-height: 70px; font-size: 0.88rem;
             line-height: 1.5;
         }
         .pick-card .sub-pick-count {
             font-size: 0.7rem; color: #38bdf8;
             background: #0f172a; border: 1px solid #334155;
             padding: 2px 8px; border-radius: 6px;
-            margin-left: auto;
+            margin-left: auto; white-space: nowrap;
+        }
+        .pick-card .field-hint {
+            font-size: 0.68rem; color: #64748b;
+            margin-top: 4px; display: block;
         }
 
         .add-pick-btn {
             width: 100%; background: #1e293b;
             border: 1px dashed #334155; color: #94a3b8;
-            padding: 10px; border-radius: 10px; cursor: pointer;
+            padding: 12px; border-radius: 10px; cursor: pointer;
             font-size: 0.85rem; transition: 0.2s; font-family: inherit;
         }
         .add-pick-btn:hover { border-color: #38bdf8; color: #38bdf8; }
@@ -186,12 +149,6 @@
         }
         .btn-send:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn-secondary {
-            background: #334155; color: #e2e8f0; padding: 9px 16px;
-            border-radius: 10px; font-size: 0.82rem; cursor: pointer;
-            border: none; font-family: inherit; font-weight: 600;
-        }
-        .btn-secondary:hover { background: #475569; }
 
         .preview-box {
             background: #0f172a; border: 1px dashed #475569;
@@ -223,13 +180,6 @@
         details.config-section[open] summary { margin-bottom: 14px; }
         .hint { font-size: 0.72rem; color: #64748b; margin-top: -8px; margin-bottom: 12px; }
 
-        .raw-ocr-box { display: none; margin-top: 14px; }
-        .raw-ocr-box.visible { display: block; }
-        .raw-ocr-box textarea {
-            font-family: 'Courier New', monospace;
-            font-size: 0.75rem; min-height: 140px;
-        }
-
         @media (max-width: 600px) {
             .app-container { padding: 18px; }
             .row { grid-template-columns: 1fr; }
@@ -240,55 +190,30 @@
 </head>
 <body>
     <div class="app-container">
-        <h1>⚡ Tipster Auto-Post PRO</h1>
-        <p class="subtitle">Sube tu ticket de Novibet (o cualquier casa) → OCR inteligente → publica en Telegram.</p>
+        <h1>⚡ Tipster Auto-Post</h1>
+        <p class="subtitle">Añade tus selecciones, genera el texto tipster y publícalo en Telegram.</p>
 
         <!-- CONFIG -->
         <details class="config-section">
             <summary>⚙️ Configuración de Telegram</summary>
             <label for="botToken">Bot Token</label>
             <input type="password" id="botToken" placeholder="123456789:ABCdef..." />
+            <p class="hint">Obtenlo de @BotFather.</p>
             <label for="chatId">Chat ID del grupo</label>
             <input type="text" id="chatId" placeholder="-1001234567890" />
+            <p class="hint">ID del grupo (empieza con <code>-100</code>).</p>
             <label for="proxyUrl">Proxy CORS (opcional)</label>
             <input type="text" id="proxyUrl" placeholder="https://tu-worker.workers.dev" />
         </details>
 
-        <!-- SUBIR -->
-        <div class="section">
-            <div class="section-title">
-                <h2>📸 Screenshot del ticket</h2>
-                <span class="tag">Novibet · Bet365 · Codere…</span>
-            </div>
-            <div class="upload-zone" id="uploadZone">
-                <div class="icon">🖼️</div>
-                <p><strong>Arrastra</strong>, <strong>haz clic</strong> o pega con <strong>Ctrl+V</strong></p>
-                <p class="hint-small">OCR en español + inglés · Parser específico Novibet</p>
-                <input type="file" id="fileInput" accept="image/*" />
-                <img id="imgPreview" class="img-preview" style="display:none;" />
-            </div>
-            <div class="ocr-progress" id="ocrProgress">
-                <div class="status-txt">
-                    <span id="ocrStatus">Iniciando OCR…</span>
-                    <span id="ocrPercent">0%</span>
-                </div>
-                <div class="bar-bg"><div class="bar-fill" id="ocrBar"></div></div>
-            </div>
-            <div class="raw-ocr-box" id="rawBox">
-                <label>Texto bruto detectado (editable para re-parsear)</label>
-                <textarea id="rawOcr"></textarea>
-                <button class="btn-secondary" style="margin-top:8px;" onclick="reparsearOCR()">🔄 Re-parsear texto</button>
-            </div>
-        </div>
-
         <!-- PICKS -->
         <div class="section">
             <div class="section-title">
-                <h2>🎯 Selecciones detectadas</h2>
+                <h2>🎯 Selecciones</h2>
                 <span class="tag" id="pickCount">0 picks</span>
             </div>
             <div id="picksList"></div>
-            <button class="add-pick-btn" onclick="addPick()">+ Añadir selección manualmente</button>
+            <button class="add-pick-btn" onclick="addPick()">+ Añadir selección</button>
 
             <div class="totals-box">
                 <div class="item">
@@ -360,330 +285,6 @@
         const attr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
         // ═══════════════════════════════════════════════════════════════
-        // SUBIDA DE IMAGEN
-        // ═══════════════════════════════════════════════════════════════
-        const uploadZone = document.getElementById('uploadZone');
-        const fileInput  = document.getElementById('fileInput');
-        const imgPreview = document.getElementById('imgPreview');
-
-        uploadZone.addEventListener('click', () => fileInput.click());
-        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
-        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
-        uploadZone.addEventListener('drop', e => {
-            e.preventDefault(); uploadZone.classList.remove('drag');
-            const f = e.dataTransfer.files[0];
-            if (f && f.type.startsWith('image/')) handleImage(f);
-        });
-        fileInput.addEventListener('change', e => {
-            const f = e.target.files[0];
-            if (f) handleImage(f);
-        });
-        document.addEventListener('paste', e => {
-            for (const item of e.clipboardData.items) {
-                if (item.type.startsWith('image/')) {
-                    const f = item.getAsFile();
-                    if (f) { handleImage(f); break; }
-                }
-            }
-        });
-
-        async function handleImage(file) {
-            imgPreview.src = URL.createObjectURL(file);
-            imgPreview.style.display = 'block';
-            await ejecutarOCR(file);
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // OCR
-        // ═══════════════════════════════════════════════════════════════
-        async function ejecutarOCR(file) {
-            const progress = document.getElementById('ocrProgress');
-            const bar = document.getElementById('ocrBar');
-            const pct = document.getElementById('ocrPercent');
-            const stat = document.getElementById('ocrStatus');
-            progress.classList.add('visible');
-            bar.style.width = '0%'; pct.textContent = '0%';
-            stat.textContent = 'Iniciando motor OCR…';
-
-            try {
-                const worker = await Tesseract.createWorker('spa+eng', 1, {
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            const p = Math.round((m.progress || 0) * 100);
-                            bar.style.width = p + '%';
-                            pct.textContent = p + '%';
-                            stat.textContent = 'Reconociendo texto…';
-                        } else {
-                            stat.textContent = m.status;
-                        }
-                    }
-                });
-                const { data: { text } } = await worker.recognize(file);
-                await worker.terminate();
-                bar.style.width = '100%'; pct.textContent = '100%';
-                stat.textContent = '✅ OCR completado';
-                document.getElementById('rawOcr').value = text;
-                document.getElementById('rawBox').classList.add('visible');
-                parseTicket(text);
-                setTimeout(() => progress.classList.remove('visible'), 1800);
-            } catch (err) {
-                stat.textContent = '❌ Error: ' + err.message;
-            }
-        }
-
-        function reparsearOCR() {
-            parseTicket(document.getElementById('rawOcr').value);
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // PARSER PRINCIPAL — Detecta formato y delega
-        // ═══════════════════════════════════════════════════════════════
-        function parseTicket(texto) {
-            if (!texto || !texto.trim()) return;
-            // Normalizar: quitar \r, colapsar espacios múltiples por línea
-            const lines = texto.replace(/\r/g, '').split('\n')
-                .map(l => l.replace(/\t/g, ' ').replace(/\s{2,}/g, '  ').trimEnd());
-
-            // Detectar metadatos del encabezado (Apuesta, Devolución, tipo)
-            const header = parseHeader(lines);
-            if (header.stake) document.getElementById('stake').value = header.stake;
-
-            // ¿Es formato "Constructor" (Novibet)?
-            const hasConstructor = lines.some(l => /constructor/i.test(l) && /@\s*\d/.test(l));
-            let detectados = [];
-            if (hasConstructor) {
-                detectados = parseConstructorTicket(lines);
-            } else {
-                detectados = parseGenericTicket(lines);
-            }
-
-            if (detectados.length === 0) {
-                mostrarEstado('info', '⚠️ No se detectaron picks. Añádelos manualmente o edita el texto bruto.');
-            } else {
-                picks = detectados;
-                // Autodetectar deporte si no está puesto
-                if (!document.getElementById('sport').value) {
-                    const todo = texto.toLowerCase();
-                    let deporte = '';
-                    if (/juego|set|tie ?break|ace|atp|wta/.test(todo)) deporte = 'Tenis';
-                    else if (/gol|goleador|1x2|ambos marcan|btts/.test(todo)) deporte = 'Fútbol';
-                    else if (/punto|rebote|triple|nba/.test(todo)) deporte = 'Baloncesto';
-                    if (deporte) document.getElementById('sport').value = deporte;
-                }
-                renderPicks();
-                mostrarEstado('info', `✅ ${detectados.length} pick${detectados.length>1?'s':''} detectado${detectados.length>1?'s':''}. Revisa y edita si hace falta.`);
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // HEADER — Extrae stake, tipo, nº opciones
-        // ═══════════════════════════════════════════════════════════════
-        function parseHeader(lines) {
-            const info = { stake: '', tipo: '', numPicks: 0 };
-            for (const l of lines) {
-                // Apuesta $X / Apuesta $X.XX
-                const apMatch = l.match(/apuesta\s*\$?\s*([\d.,]+)/i);
-                if (apMatch && !info.stake) info.stake = apMatch[1].replace(',', '.');
-                // N opciones
-                const opMatch = l.match(/(\d+)\s*opciones/i);
-                if (opMatch) info.numPicks = parseInt(opMatch[1]);
-                // Parlay / Simple
-                if (/^parlay/i.test(l.trim())) info.tipo = 'Parlay';
-                else if (/^simple/i.test(l.trim()) && !info.tipo) info.tipo = 'Simple';
-            }
-            return info;
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // PARSER NOVIBET — Bloques "Constructor" / "Bet Builder"
-        // Estructura:
-        //   [emoji] Constructor          @ X.XX
-        //   ○ Sub-selección 1
-        //     descripción 1
-        //   ○ Sub-selección 2
-        //     descripción 2
-        //   [opcional] "Si se anula una selección..."
-        //   Equipo A - Equipo B          día HH:MM
-        // ═══════════════════════════════════════════════════════════════
-        function parseConstructorTicket(lines) {
-            const bloques = [];
-            let cur = null;
-            let lastSelIdx = -1;
-
-            // Patrón de evento al final de línea: "Equipo A - Equipo B    mié 08:00"
-            // Acepta: día de la semana (con o sin tilde) o fecha, seguido de HH:MM
-            const eventoRe = /^(.{3,}?)\s+[-–—]\s+(.{3,}?)\s+((?:lun|mar|mi[eé]|jue|vie|s[áa]b|dom|mon|tue|wed|thu|fri|sat|sun)[a-záéíóúñ]*\.?[\s,]*\d{1,2}:\d{2}(?::\d{2})?)/i;
-
-            for (let i = 0; i < lines.length; i++) {
-                const raw = lines[i];
-                const l = raw.trim();
-                if (!l) continue;
-
-                // Ignorar líneas de ruido
-                if (/^novibet$/i.test(l)) continue;
-                if (/^abierto$/i.test(l)) continue;
-                if (/^retiro de dinero/i.test(l)) continue;
-                if (/^\d{2}\/\d{2}\/\d{4}/.test(l)) continue;
-
-                // Inicio de bloque: "Constructor @ X.XX" (opcional emoji delante)
-                const isStart = /constructor/i.test(l) && /@\s*[\d.,]+/.test(l);
-                if (isStart) {
-                    if (cur && (cur.selections.length || cur.event)) bloques.push(cur);
-                    const oddsMatch = l.match(/@\s*([\d.,]+)/);
-                    cur = {
-                        event: '',
-                        market: 'Constructor',
-                        selections: [],   // [{label, desc}]
-                        odds: oddsMatch ? oddsMatch[1].replace(',', '.') : '',
-                    };
-                    lastSelIdx = -1;
-                    continue;
-                }
-
-                if (!cur) continue;
-
-                // Nota de Bet Builder → ignorar
-                if (/si se anula/i.test(l)) continue;
-
-                // Evento (equipos + día/hora) → cierra el bloque lógicamente
-                const evM = raw.match(eventoRe);
-                if (evM) {
-                    cur.event = `${evM[1].trim()} - ${evM[2].trim()}`;
-                    bloques.push(cur);
-                    cur = null;
-                    lastSelIdx = -1;
-                    continue;
-                }
-
-                // Sub-selección: empieza con ○ ◯ ● O •
-                const selM = l.match(/^[○◯●○O•·]\s+(.+)/);
-                if (selM) {
-                    cur.selections.push({ label: selM[1].trim(), desc: '' });
-                    lastSelIdx = cur.selections.length - 1;
-                    continue;
-                }
-
-                // Descripción: texto indentado (empezaba con espacios) tras una ○
-                const teniaIndent = /^\s{2,}/.test(raw);
-                if (lastSelIdx >= 0 && teniaIndent) {
-                    const desc = l.replace(/^[•·\-\s]+/, '').trim();
-                    if (desc && !/^@/.test(desc)) {
-                        cur.selections[lastSelIdx].desc = cur.selections[lastSelIdx].desc
-                            ? cur.selections[lastSelIdx].desc + ' ' + desc
-                            : desc;
-                    }
-                    continue;
-                }
-
-                // A veces la descripción no tiene indentación clara (OCR pierde espacios)
-                // Si la línea no matchea nada más y hay una sub-selección reciente sin desc, usarla
-                if (lastSelIdx >= 0 && !cur.selections[lastSelIdx].desc
-                    && !/@\s*\d/.test(l) && l.length > 3 && l.length < 80) {
-                    // Evitar confundir con la cabecera del ticket
-                    if (!/apuesta|devoluci[oó]n|opciones|parlay/i.test(l)) {
-                        cur.selections[lastSelIdx].desc = l.trim();
-                    }
-                }
-            }
-            if (cur && (cur.selections.length || cur.event)) bloques.push(cur);
-
-            // Convertir bloques a picks planos y legibles
-            return bloques.map(b => {
-                // Combinar cada sub-selección: label + descripción inteligente
-                const lines2 = b.selections.map(s => {
-                    const { label, desc } = s;
-                    if (!desc) return label;
-
-                    const dl = desc.toLowerCase();
-                    // "Sí" + descripción → usar descripción
-                    if (/^s[ií]$/i.test(label)) return desc;
-                    // "Más/Menos de X.5" + "Juegos/Goles/Puntos..."
-                    if (/^(más|mas|menos) de/i.test(label)) {
-                        if (dl.includes('juego')) return `${label} juegos`;
-                        if (dl.includes('gol')) return `${label} goles`;
-                        if (dl.includes('punto')) return `${label} puntos`;
-                        if (dl.includes('set')) return `${label} sets`;
-                        return label;
-                    }
-                    // "Nombre +X.5" + "Juegos - Hándicap" → solo label
-                    if (/h[áa]ndicap/i.test(desc) && /\+\d/.test(label)) return label;
-                    // "Nombre" + "Ganador/Goleador/1er set" → label + contexto
-                    if (/goleador/i.test(desc)) return `${label} — goleador`;
-                    if (/ganador/i.test(desc)) return `${label} — ganador`;
-                    if (/1er set/i.test(desc)) return `${label} — 1er set`;
-                    // Fallback: label + descripción entre paréntesis si aporta info
-                    return label;
-                });
-
-                return {
-                    event: b.event || 'Evento sin detectar',
-                    market: 'Constructor',
-                    selection: lines2.map(x => '• ' + x).join('\n'),
-                    odds: b.odds,
-                };
-            });
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // PARSER GENÉRICO — para otras casas con formato de línea única
-        // ═══════════════════════════════════════════════════════════════
-        function parseGenericTicket(lines) {
-            const oddsRe = /(?:^|\s)(\d{1,2})[.,](\d{1,2})(?:\s|$)/;
-            const detectados = [];
-            for (let i = 0; i < lines.length; i++) {
-                const l = lines[i].trim();
-                if (!l) continue;
-                const m = l.match(oddsRe);
-                if (!m) continue;
-                const cuota = parseFloat(`${m[1]}.${m[2]}`);
-                if (cuota < 1.01 || cuota > 200) continue;
-
-                const ctx = [];
-                for (let j = i - 1; j >= Math.max(0, i - 6); j--) {
-                    if (lines[j] && lines[j].trim()) ctx.unshift(lines[j].trim());
-                }
-                if (ctx.length === 0) continue;
-
-                let event = '', market = '', selection = '';
-                const vsRe = /(.{3,})\s+(?:vs\.?|v\.?|-)\s+(.{3,})/i;
-                let vsIndex = -1;
-                for (let k = 0; k < ctx.length; k++) {
-                    if (vsRe.test(ctx[k])) { vsIndex = k; break; }
-                }
-
-                const mercados = ['1x2','ambos marcan','btts','over','under','más de','mas de','menos de',
-                    'hándicap','handicap','total de','ganador','empate','doble oportunidad','córners',
-                    'corners','tarjetas','tiros','sets','juegos','gana','resultado','1ª parte','2ª parte'];
-
-                if (vsIndex >= 0) {
-                    event = ctx[vsIndex];
-                    const rest = ctx.slice(vsIndex + 1);
-                    if (rest.length === 1) selection = rest[0];
-                    else if (rest.length > 1) {
-                        selection = rest[rest.length - 1];
-                        market = rest.slice(0, -1).join(' ');
-                    }
-                } else {
-                    event = ctx[0];
-                    if (ctx.length === 1) selection = ctx[0];
-                    else if (ctx.length === 2) selection = ctx[1];
-                    else { selection = ctx[ctx.length - 1]; market = ctx.slice(1, -1).join(' '); }
-                }
-
-                if (!event) continue;
-                if (detectados.some(p => p.event === event && Math.abs(num(p.odds) - cuota) < 0.01)) continue;
-
-                detectados.push({
-                    event: event.slice(0, 90),
-                    market: market.slice(0, 60),
-                    selection: selection.slice(0, 100),
-                    odds: cuota.toFixed(2),
-                });
-            }
-            return detectados;
-        }
-
-        // ═══════════════════════════════════════════════════════════════
         // RENDER PICKS (tarjetas)
         // ═══════════════════════════════════════════════════════════════
         function renderPicks() {
@@ -715,9 +316,10 @@
                                    value="${attr(p.odds)}" oninput="updatePick(${i},'odds',this.value)" />
                         </div>
                     </div>
-                    <span class="field-label">Selección (usa • para separar legs)</span>
-                    <textarea placeholder="• Selección 1&#10;• Selección 2"
+                    <span class="field-label">Selección</span>
+                    <textarea placeholder="Ejemplo constructor:&#10;• Jenson Brooksby ganar al menos 1 set&#10;• Más de 19.5 juegos&#10;&#10;Ejemplo simple:&#10;Ambos equipos marcan"
                               oninput="updatePick(${i},'selection',this.value)">${esc(p.selection)}</textarea>
+                    <span class="field-hint">💡 Usa <b>•</b> al inicio de cada línea para varios legs (Constructor/Bet Builder)</span>
                 `;
                 cont.appendChild(card);
             });
@@ -728,7 +330,6 @@
             if (!picks[i]) return;
             picks[i][field] = value;
             actualizarTotales();
-            // Actualizar contador de legs si es selection
             if (field === 'selection') {
                 const card = document.querySelectorAll('.pick-card')[i];
                 if (card) {
@@ -753,11 +354,22 @@
             if (picks.length === 0) picks.push({ event:'', market:'', selection:'', odds:'' });
             renderPicks();
         }
+
         function addPick() {
             const last = picks[picks.length-1];
-            if (last && !last.event && !last.selection && !last.odds) return;
+            if (last && !last.event && !last.selection && !last.odds) {
+                // ya hay una vacía → enfocar
+                const cards = document.querySelectorAll('.pick-card');
+                const inputs = cards[cards.length-1].querySelectorAll('input');
+                if (inputs[0]) inputs[0].focus();
+                return;
+            }
             picks.push({ event:'', market:'', selection:'', odds:'' });
             renderPicks();
+            // Enfocar el nuevo
+            const cards = document.querySelectorAll('.pick-card');
+            const inputs = cards[cards.length-1].querySelectorAll('input');
+            if (inputs[0]) inputs[0].focus();
         }
 
         function actualizarTotales() {
@@ -825,23 +437,19 @@
                     const bullet = nums[i] || '•';
                     msg += `${bullet} <b>${esc(p.event)}</b>\n`;
 
-                    // Selecciones: separar por líneas con • y renderizar cada una
                     const subLines = p.selection.split('\n')
                         .map(l => l.replace(/^[•·\-\s]+/, '').trim())
                         .filter(l => l);
 
                     if (subLines.length > 1) {
-                        // Es un Constructor/Bet Builder con varios legs
-                        msg += `   🎯 <i>Constructor @ ${esc(p.odds)}</i>\n`;
+                        // Constructor / Bet Builder con varios legs
+                        msg += `   🎯 <i>${esc(p.market || 'Constructor')} @ ${esc(p.odds)}</i>\n`;
                         subLines.forEach(sl => {
                             msg += `   ✓ ${esc(sl)}\n`;
                         });
                     } else {
-                        // Pick simple
                         const sel = subLines[0] || p.selection;
-                        if (p.market && p.market !== 'Constructor') {
-                            msg += `   📋 ${esc(p.market)}\n`;
-                        }
+                        if (p.market) msg += `   📋 ${esc(p.market)}\n`;
                         msg += `   🎯 <b>${esc(sel)}</b>  ·  💰 ${esc(p.odds)}\n`;
                     }
                     msg += `\n`;
@@ -859,11 +467,10 @@
                     .filter(l => l);
 
                 if (subLines.length > 1) {
-                    msg += `🎯 <b>Constructor @ ${esc(p.odds)}:</b>\n`;
+                    msg += `🎯 <b>${esc(p.market || 'Constructor')} @ ${esc(p.odds)}:</b>\n`;
                     subLines.forEach(sl => { msg += `   ✓ ${esc(sl)}\n`; });
                 } else {
-                    if (p.market && p.market !== 'Constructor')
-                        msg += `📋 <b>Mercado:</b> ${esc(p.market)}\n`;
+                    if (p.market) msg += `📋 <b>Mercado:</b> ${esc(p.market)}\n`;
                     msg += `🎯 <b>Selección:</b> <b>${esc(subLines[0] || p.selection)}</b>\n`;
                     msg += `💰 <b>Cuota:</b> ${esc(p.odds)}\n`;
                 }
@@ -889,7 +496,7 @@
             const box = document.getElementById('previewBox');
             box.classList.add('visible');
             if (!texto) {
-                box.textContent = '⚠️ Añade al menos un pick con evento, selección y cuota.';
+                box.textContent = '⚠️ Añade al menos una selección con evento, selección y cuota.';
                 return;
             }
             box.textContent = texto.replace(/<\/?[^>]+(>|$)/g, '');
@@ -910,7 +517,7 @@
             }
             const texto = generarTexto();
             if (!texto) {
-                mostrarEstado('error', '❌ Añade al menos un pick válido.');
+                mostrarEstado('error', '❌ Añade al menos una selección válida.');
                 return;
             }
 
@@ -952,6 +559,9 @@
             status.className = 'status'; status.style.display = 'none';
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════════════════════════
         window.addEventListener('DOMContentLoaded', renderPicks);
     </script>
 </body>
